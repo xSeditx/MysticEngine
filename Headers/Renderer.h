@@ -4,13 +4,10 @@
 
 #include<vector>
 
-#include"WindowGLSDL.h"
-#include"shader.h"
-#include"camera.h"
-
-#include"Buffers.h" // remove this later down the line.
-
-#include"FrameBuffer.h"
+#include "WindowGLSDL.h"
+#include "Shader.h"
+#include "Camera.h"
+#include "FrameBuffer.h"
 
 
 
@@ -27,6 +24,205 @@
 //
 #define BUFFER_OFFSET(i)   ((char *)NULL + (i))
  
+
+
+#include"Window.h"
+#include"Texture.h"
+#include"Renderer.h"
+
+//using namespace glm;
+
+
+struct Vertex
+{
+	Vec3 Position;
+	Vec3 Normals;
+	Vec2 Uv;
+};
+
+//#define __GLBUFFER_FINISHED
+enum BufferTypes
+{
+	VERTEX,
+	COLOR,
+	NORMAL,
+	UVCOORD,
+	TEXTURE,
+	INDICE
+};
+
+
+//================================================================================================================================================================================================ 
+//   GLBuffer needs completion, This will become a Generic buffer class. Possibly typedef out the various buffer types to behave exactly how is currently setup for the multiple buffer types.	   
+//================================================================================================================================================================================================ 
+// TODO: BIGTODO: Make this Buffer class the Default, All buffers should spawn from this eliminating Hundreds of lines as well as abiguity between the buffers. Implementation such as map buffer can be easily realized
+
+class Attribute
+{
+public:
+	Attribute() {}
+	Attribute(BufferTypes t)
+	{
+		AttributeType = t;
+	}
+	BufferTypes AttributeType;
+};
+
+template<class T>
+class VertexBufferObject : public Attribute
+{
+public:
+	VertexBufferObject() {}
+	VertexBufferObject(T *data, GLsizei count)
+		: // Assume Dynamic Draw as the default buffer access
+		ElementCount(count),
+		ID(0)
+	{
+		Data.resize(count);
+		Data.insert(Data.begin(), count, *data);
+		Stride = sizeof(T);
+		glGenBuffers(1, &ID);
+		glBindBuffer(GL_ARRAY_BUFFER, ID);
+		glBufferData(GL_ARRAY_BUFFER, ElementCount * sizeof(T), data, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	VertexBufferObject(GLenum access, T *data, GLsizei count)
+		: // Specify default access
+		ElementCount(count),
+		ID(0)
+	{
+		Data.resize(count);
+		Data.insert(Data.begin(), count, *data);
+		Stride = sizeof(T);
+		glGenBuffers(1, &ID);
+		glBindBuffer(GL_ARRAY_BUFFER, ID);
+		glBufferData(GL_ARRAY_BUFFER, ElementCount * sizeof(T), data, access);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	GLuint ID = 0;
+	GLuint ElementCount = 0;
+	GLuint Stride;
+
+	void Bind()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, ID);
+	}
+	void Unbind()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, NULL);
+	}
+
+	void Map(GLenum accessflags);
+	void MapRange(int offset, int count, GLenum accessflags);
+	void Release();
+	void Destroy();
+
+
+	VertexBufferObject operator = (std::vector<T> data);          // Map the whole buffer, resize if needed and make the data of the buffer equal to that of the Rvalue
+	VertexBufferObject operator = (VertexBufferObject &other) { return other; }  // Same but perform a shallow copy of the buffer
+	VertexBufferObject operator += (VertexBufferObject &data); // Map the buffer and add to the end of it, updating the data, and size while retaining access type and ID
+
+	int size() const { return Data.size(); }
+
+protected:
+	std::vector<T> Data;
+};
+
+class VertexArrayObject
+{
+public:
+	VertexArrayObject()
+	{
+		glGenVertexArrays(1, &VAO);
+	}
+	void Bind()
+	{
+		glBindVertexArray(VAO);
+	}
+	void Unbind()
+	{
+		glBindVertexArray(0);
+	}
+
+	template<typename T>
+	void Attach(BufferTypes bufferT, VertexBufferObject<T> *buffer)
+	{
+		Bind();
+
+		GLint
+			Amount = 0,
+			Attrib = 0;
+
+		switch (bufferT)
+		{
+		case BufferTypes::VERTEX:
+			Amount = 3;
+			buffer->AttributeType = VERTEX;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer->ID);
+			Attrib = glGetAttribLocation(Shader::GetActiveShader()->GetName(), "VertexPosition");
+			Buffers.push_back(*buffer);
+			break;
+
+		case BufferTypes::COLOR:
+			Amount = 4;
+			buffer->AttributeType = COLOR;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer->ID);
+			Attrib = glGetAttribLocation(Shader::GetActiveShader()->GetName(), "VertexColor");
+			Buffers.push_back(*buffer);
+			break;
+
+		case BufferTypes::NORMAL:
+			Amount = 3;
+			buffer->AttributeType = NORMAL;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer->ID);
+			Attrib = glGetAttribLocation(Shader::GetActiveShader()->GetName(), "VertexNormal");
+			Buffers.push_back(*buffer);
+			break;
+
+		case BufferTypes::UVCOORD:
+			Amount = 2;
+			//Amount = buffer->ElementCount;
+			buffer->AttributeType = UVCOORD;
+
+			glBindBuffer(GL_ARRAY_BUFFER, buffer->ID);
+			Attrib = glGetAttribLocation(Shader::GetActiveShader()->GetName(), "TextureCoords");
+			Buffers.push_back(*buffer);
+			break;
+		case BufferTypes::INDICE:
+			ElementCount = buffer->ElementCount;
+			buffer->AttributeType = INDICE;
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->ID);
+			Buffers.push_back(*buffer);
+			return; // If its Indices we have done what we need to already in binding the VAO than the IndexBuffer. Exit before attempts at Enabling Attributes take place.
+			break;
+		}
+		glEnableVertexAttribArray(Attrib);
+		glVertexAttribPointer(Attrib, Amount, GL_FLOAT, GL_FALSE, 0, (char *)NULL);
+	}
+	GLuint VAO;
+	int ElementCount;
+	std::vector<Attribute> Buffers;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 TODO: THIS WILL BE UPDATED TO PERFORM BATCHING OPERATIONS AS MUCH AS POSSIBLE AS THE ENGINE WILL LOG ALL DRAW CALLS AND DECIDE THE ORDERS TO PERFORM THEM IN
@@ -97,3 +293,11 @@ static class DrawCall
 //GLuint Shader::VertexLocation  = 0;
 //GLuint Shader::ColorsLocation  = 0;
 //GLuint Shader::NormalsLocation = 0;
+
+
+
+
+
+
+
+

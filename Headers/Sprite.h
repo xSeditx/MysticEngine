@@ -71,7 +71,7 @@ class Sprite;
 #include"core.h"
 #include"texture.h"
 #include"Material.h"
-#include"buffers.h"
+#include"Renderer.h"
 
 #include"time.h"
 
@@ -101,13 +101,13 @@ public:
 	Animation() {}
 	~Animation() {}
 
-	Animation(Image *img, Quad sourcerect, uint numframes);
+	Animation(Image *img, Quad sourcerect, unsigned int numframes);
 	Animation(Image *img, Quad srcrect, int border, GLuint numframes);
 
 	std::vector<Frame> Frames;
 
-	uint TotalFrames;
-	uint CurrentFrame;
+	unsigned int TotalFrames;
+	unsigned int CurrentFrame;
 
 	GLint  AnimationSpeed;
 
@@ -143,7 +143,7 @@ public:
 	int ID;
 
 	GLuint CurrentState;
-
+	char *Name;
 	std::vector<Animation> Animations;
 	GLuint NumberofStates;
 

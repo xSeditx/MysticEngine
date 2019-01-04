@@ -14,7 +14,7 @@
 #include"Texture.h"
 #include"Sprite.h"	
 #include"Particles.h"
-
+ 
 // https://stackoverflow.com/questions/28287162/why-is-a-simple-shader-slower-than-the-standard-pipeline
 
 void Update()
@@ -96,7 +96,6 @@ void LoadStuff()
 
 void main()
 {
-
 	Window MainWin(100, 50, 640, 480, "SDL OpenGL TestWindow");
 	MainWin.Callbacks.SetOnKeyDown(Keydown);
 	MainWin.Callbacks.SetOnMouseMove(MouseMove);
@@ -114,7 +113,8 @@ void main()
 
 	Viewport::Camera = &MainWin.World->Camera;
 
-	
+ //	GMesh GTest;
+ //	GTest.MakeCube(Vec3(0, 0, 0), 5);
 #ifdef __TEST_3D
 	{ // CREATION OF THE FIRST OBJECT TO DISPLAY THE LIGHT
 		Sphere *center = new Sphere(Vec3(0, 0, 0), 1, 25);
@@ -124,14 +124,17 @@ void main()
 	
 	{ // CREATION OF ALL THE OTHER OBJECTS IN THE SCENE
 		int dist = 150;
-		for_loop(Index, 30)
+		for_loop(Index, 130)
 		{
 			Vec3 pos = Vec3(rand() % dist - (dist*.5), rand() % dist - (dist*.5), rand() % dist - (dist*.5));
+			//GMesh *GTest = new GMesh();
+			//GTest->MakeCube(pos, 2);
+			//MainWin.World->Groups[0].Add(GTest, BrickMaterial());
+
 			Block *b = new Block(pos, 2);
 			MainWin.World->Groups[0].Add(b, BrickMaterial()); //; Sphere(pos, 1, 30)
 		}
 	}
-
 #endif
 #ifdef __TEST_2D  // SPRITE GROUP CREATION
 	{

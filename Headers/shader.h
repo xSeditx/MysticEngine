@@ -8,12 +8,7 @@
 #include<unordered_map>
 
 
-#ifndef _DISPLAYED_MESSAGE_SHADER_ARB
-#    ifdef _USE_SHADER_EXTENSIONS
-#    define _DISPLAYED_MESSAGE_SHADER_ARB
-#        pragma message( "Compiling Using ARB Shader Extension" )
-#    endif
-#endif
+
 enum Uniformtype
 {
 	Float,

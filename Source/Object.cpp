@@ -1,14 +1,11 @@
 #include"Object.h"
 
 
-
 Object::Object()
 {
 	Position = Vec3(1.0f);
 	Rotation = Vec3(1.0f);
 	Scale = Vec3(1.0f);
-
-	Update();   	//Transform = Transformation(Position, Rotation, Scale);
 }
 
 void Object::LoadOBJ(char *path)
@@ -67,8 +64,13 @@ void Object::LoadOBJ(char *path)
 
 	}
 
-	Polygons = new VAOBuffer();
-	Polygons->Attach(new VertexBuffer(&Vertices[0], Vertices.size()));
-	Polygons->Attach(new IndexBuffer(&Indices[0], Indices.size()));
-	Polygons->Attach(new NormalBuffer(&Normals[0], Normals.size()));
+// 	Polygons = new VAOBuffer();
+// 	Polygons->Attach(new VertexBuffer(&Vertices[0], Vertices.size()));
+// 	Polygons->Attach(new IndexBuffer(&Indices[0], Indices.size()));
+// 	Polygons->Attach(new NormalBuffer(&Normals[0], Normals.size()));
+
+	VAO = new VertexArrayObject();
+	VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&Vertices[0], Vertices.size()));
+	VAO->Attach(BufferTypes::NORMAL, new VertexBufferObject<Vec3>(&Normals[0], Normals.size()));
+	VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&Indices[0], Indices.size()));
 }

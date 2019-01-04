@@ -27,10 +27,12 @@ Sphere::Sphere(Vec3 pos, float radius, int sectors, Material *mat)
 //                                         PRIMATIVES TO TEST WITH                                                                                                                                                   
 //======================================================================================================================================================================================
 
+
+// APPEARS TO BE FUNCTIONING....
 Block::Block(Vec3 pos, float size)
 
 {
-	VertexCount = 0;
+//	VertexCount = 0;
 	//f_TRACE(Print("Block Constructor"));
 	Position = pos;
 
@@ -229,13 +231,14 @@ Block::Block(Vec3 pos, float size)
 		NormalList[Index + 3] = Norm;
 	}
 
-	Polygons = new VAOBuffer();
+//	Polygons = new VAOBuffer();
 
-	Polygons->Attach(new VertexBuffer(&VertexList[0], 24));
-	Polygons->Attach(new UVBuffer(&TextureCoords[0], 24));
-	Polygons->Attach(new NormalBuffer(&NormalList[0], 24));
-	Polygons->Attach(new ColorBuffer(&Cols[0], 24));
-	Polygons->Attach(new IndexBuffer(&IndexList[0], 36));
+	VAO = new VertexArrayObject();
+    VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&VertexList[0], 24));
+	VAO->Attach(BufferTypes::UVCOORD, new VertexBufferObject<Vec2>(&TextureCoords[0], 24));
+	VAO->Attach(BufferTypes::NORMAL, new  VertexBufferObject<Vec3>(&NormalList[0], 24));
+	VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec4>(&Cols[0], 24));
+	VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&IndexList[0], 36));
 
 	Transform = glm::mat4(1.0f); // Set Identity and Rotate all axis followed with the Translation.
 	Transform = glm::rotate(Transform, glm::radians(Rotation.x), Vec3(1.0f, 0.0f, 0.0f));
@@ -243,6 +246,27 @@ Block::Block(Vec3 pos, float size)
 	Transform = glm::rotate(Transform, glm::radians(Rotation.z), Vec3(0.0f, 0.0f, 1.0f));
 	Transform = glm::translate(Transform, Position);
 	Rotation = Vec3(rand() % 360, rand() % 360, rand() % 360);
+
+
+	//    Polygons->Attach(new VertexBuffer(&VertexList[0], 24));
+	//    Polygons->Attach(new UVBuffer(&TextureCoords[0], 24));
+	//    Polygons->Attach(new NormalBuffer(&NormalList[0], 24));
+
+	//    Polygons->Attach(new ColorBuffer(&Cols[0], 24));
+	//    Polygons->Attach(new IndexBuffer(&IndexList[0], 36));
+
+	//	Polygons->Attach(BufferTypes::Vertextype, new GLBuffer<Vec3>(BufferTypes::Vertextype, &VertexList[0], 24));
+	//	Polygons->Attach(BufferTypes::UVtype, new GLBuffer<Vec2>(BufferTypes::UVtype, &TextureCoords[0], 24));
+	//	Polygons->Attach(BufferTypes::Normalstype, new GLBuffer<Vec3>(BufferTypes::Normalstype, &NormalList[0], 24));
+	//	Polygons->Attach(BufferTypes::Colortype, new GLBuffer<Vec4>(BufferTypes::Colortype, &Cols[0], 24));
+	//	Polygons->Attach(BufferTypes::Indicetype, new GLBuffer<GLuint>(BufferTypes::Indicetype, &IndexList[0], 36));
+	//
+
+
+	//BufferTypes type, T *data, GLsizei count)
+
+
+
 
 	// model_matrix = glm::translate(glm::rotate(glm::scale( mat4(1.0f), scaling), rotation_angle, rotation_axis), translation);
 	// glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
@@ -253,7 +277,7 @@ Cube::Cube(Vec3 pos, float size)
 
 {
 
-	VertexCount = 0;
+//	VertexCount = 0;
 	//f_TRACE(Print("Block Constructor"));
 	Position = pos;
 
@@ -454,14 +478,22 @@ Cube::Cube(Vec3 pos, float size)
 
 	}
 
-	Polygons = new VAOBuffer();
+// 	Polygons = new VAOBuffer();
+// 
+// 	Polygons->Attach(new VertexBuffer(&VertexList[0], 24));
+// 	Polygons->Attach(new UVBuffer(&TextureCoords[0], 24));
+// 	Polygons->Attach(new NormalBuffer(&NormalList[0], 24));
+// 	Polygons->Attach(new ColorBuffer(&Cols[0], 24));
+// 	Polygons->Attach(new IndexBuffer(&IndexList[0], 36));
+// 	Polygons->Unbind();
 
-	Polygons->Attach(new VertexBuffer(&VertexList[0], 24));
-	Polygons->Attach(new UVBuffer(&TextureCoords[0], 24));
-	Polygons->Attach(new NormalBuffer(&NormalList[0], 24));
-	Polygons->Attach(new ColorBuffer(&Cols[0], 24));
-	Polygons->Attach(new IndexBuffer(&IndexList[0], 36));
-	Polygons->Unbind();
+
+	VAO = new VertexArrayObject();
+	VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&VertexList[0], 24));
+//	VAO->Attach(BufferTypes::UVCOORD, new VertexBufferObject<Vec2>(&TextureCoords[0], 24));
+//	VAO->Attach(BufferTypes::NORMAL, new  VertexBufferObject<Vec3>(&NormalList[0], 24));
+//	VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec4>(&Cols[0], 24));
+	VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&IndexList[0], 36));
 
 
 	Transform = glm::mat4(1.0f); // Set Identity and Rotate all axis followed with the Translation.
@@ -606,13 +638,22 @@ Sphere::Sphere(Vec3 pos, float radius, int sectors)
 //  Vec2((1.0f / 360.0f) * (Lat + size), (1.0f / 180.0f) *(Long + size)));
 
 
-	Polygons = new VAOBuffer();
-	Polygons->Attach(new VertexBuffer(&Verts[0], VertexCount));
-	Polygons->Attach(new IndexBuffer(&Ind[0], IndexCount));
-	Polygons->Attach(new ColorBuffer(&Col[0], ColorCount));
- 	Polygons->Attach(new NormalBuffer(&Norm[0], VertexCount));
-	Polygons->Attach(new UVBuffer(&UV[0], VertexCount));
-	Polygons->Unbind();
+// Polygons = new VAOBuffer();
+// Polygons->Attach(new VertexBuffer(&Verts[0], VertexCount));
+// Polygons->Attach(new IndexBuffer(&Ind[0], IndexCount));
+// Polygons->Attach(new ColorBuffer(&Col[0], ColorCount));
+// Polygons->Attach(new NormalBuffer(&Norm[0], VertexCount));
+// Polygons->Attach(new UVBuffer(&UV[0], VertexCount));
+// Polygons->Unbind();
+
+
+   VAO = new VertexArrayObject();
+   VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&Verts[0], VertexCount));
+   VAO->Attach(BufferTypes::UVCOORD, new VertexBufferObject<Vec2>(&UV[0], VertexCount));
+   VAO->Attach(BufferTypes::NORMAL, new  VertexBufferObject<Vec3>(&Norm[0], VertexCount));
+   VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec3>(&Col[0], ColorCount));
+   VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&Ind[0], IndexCount));
+
 }
 Plane::Plane(Vec3 pos, Vec3 rotation, float width, float height)
 {
@@ -627,7 +668,7 @@ Plane::Plane(Vec3 pos, Vec3 rotation, float width, float height)
 	Transform = glm::rotate(Transform, glm::radians(Rotation.y), Vec3(0.0f, 1.0f, 0.0f));
 	Transform = glm::rotate(Transform, glm::radians(Rotation.z), Vec3(0.0f, 0.0f, 1.0f));
 	Transform = glm::translate(Transform, Position);
-	Polygons = new VAOBuffer();
+	VAO = new VertexArrayObject();
 
 	Vec3 V[] =
 	{
@@ -657,7 +698,7 @@ Plane::Plane(Vec3 pos, Vec3 rotation, float width, float height)
 
 	Vec3 Norm;
 
-	Polygons->Attach(new ColorBuffer(N, 4));
+//	Polygons->Attach(new ColorBuffer(N, 4));
 
 	for_loop(Index, 4)
 	{
@@ -669,12 +710,19 @@ Plane::Plane(Vec3 pos, Vec3 rotation, float width, float height)
 		N[Index] = Norm;
 	}
 
-	Polygons->Attach(new VertexBuffer(V, 4));
-	Polygons->Attach(new NormalBuffer(N, 4));
-	Polygons->Attach(new UVBuffer(UV, 4));
-	Polygons->Attach(new IndexBuffer(I, 12));
-	Polygons->Unbind();
+//	Polygons->Attach(new VertexBuffer(V, 4));
+//	Polygons->Attach(new NormalBuffer(N, 4));
+//	Polygons->Attach(new UVBuffer(UV, 4));
+//	Polygons->Attach(new IndexBuffer(I, 12));
+//	Polygons->Unbind();
 
+	VAO = new VertexArrayObject();
+	VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&V[0], 4));
+	VAO->Attach(BufferTypes::UVCOORD, new VertexBufferObject<Vec2>(&UV[0], 4));
+	VAO->Attach(BufferTypes::NORMAL, new  VertexBufferObject<Vec3>(&N[0], 4));
+ 
+	VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&I[0], 12));
+	
 }
 
 
@@ -686,6 +734,7 @@ Plane::Plane(Vec3 pos, Vec3 rotation, float width, float height)
  
 Torus::Torus(Vec3 position, int numc, int numt,  float scale)
 {
+	Print("ERROR: TORUS PRIMATIVE NEVER COMPLETED!");
 	Scale = Vec3(scale);
 	Position = position;
 
@@ -739,13 +788,13 @@ Torus::Torus(Vec3 position, int numc, int numt,  float scale)
 		Inds.push_back(Index + 1);
 	}
 
-	Polygons = new VAOBuffer();
-	Polygons->Attach(new VertexBuffer(&Verts[0], Verts.size()));
-	Polygons->Attach(new NormalBuffer(&Norms[0], Norms.size()));
-	Polygons->Attach(new UVBuffer(&UVs[0], UVs.size()));
-	Polygons->Attach(new ColorBuffer(&Cols[0], Cols.size()));
-	Polygons->Attach(new IndexBuffer(&Inds[0], Inds.size()));
-	Polygons->Unbind();
+//  Polygons = new VAOBuffer();
+//  Polygons->Attach(new VertexBuffer(&Verts[0], Verts.size()));
+//  Polygons->Attach(new NormalBuffer(&Norms[0], Norms.size()));
+//  Polygons->Attach(new UVBuffer(&UVs[0], UVs.size()));
+//  Polygons->Attach(new ColorBuffer(&Cols[0], Cols.size()));
+//  Polygons->Attach(new IndexBuffer(&Inds[0], Inds.size()));
+//  Polygons->Unbind();
 }
 
 
@@ -754,7 +803,7 @@ Torus::Torus(Vec3 position, int numc, int numt,  float scale)
 void Torus::Render()
 {
 	Bind();
-	glDrawElements(GL_QUAD_STRIP, Polygons->ElementCount(), GL_UNSIGNED_INT, nullptr);
+//	glDrawElements(GL_QUAD_STRIP, Polygons->ElementCount(), GL_UNSIGNED_INT, nullptr);
 }
 
 

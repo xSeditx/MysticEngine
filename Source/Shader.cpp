@@ -8,7 +8,17 @@
 =================================================================================================================================================================*/
 
 
+
 #include"Shader.h"
+
+
+#ifndef _DISPLAYED_MESSAGE_SHADER_ARB
+#    ifdef _USE_SHADER_EXTENSIONS
+#    define _DISPLAYED_MESSAGE_SHADER_ARB
+#        pragma message( "Compiling Using ARB Shader Extension" )
+#    endif
+#endif
+
 
 std::stack<Shader *> Shader::ActiveShader;
 

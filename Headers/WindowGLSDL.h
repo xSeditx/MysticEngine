@@ -38,17 +38,17 @@
 #    include <GL/glew.h>
 #    include <GL/gl.h>
 #    include <GL/glu.h>
-#    include"windows.h"
+#    include <windows.h>
 #endif
 
 #include"Window.h"
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                         GLM COMPATIBILITY                                                                                                                       
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include "glm.hpp"
-#include <gtc/type_ptr.hpp>
-#include "gtc/matrix_transform.hpp"
-
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+	 
 typedef glm::vec2 Vec2;
 typedef glm::vec3 Vec3;
 typedef glm::vec4 Vec4;

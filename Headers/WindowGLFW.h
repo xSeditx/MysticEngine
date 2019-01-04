@@ -27,7 +27,7 @@
 
 #    pragma comment(lib, "vcruntime.lib")
 #    pragma comment(lib, "msvcrt.lib")
-#pragma comment(lib, "Ws2_32.lib")
+#    pragma comment(lib, "Ws2_32.lib")
 
 #    pragma comment(lib, "opengl32.lib")
 #    pragma comment(lib, "gdiplus.lib")

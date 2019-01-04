@@ -36,7 +36,7 @@ Object
 
 //TODO:  When A Particle Dies place it directly behind the Camera in Vec3(0,0,-1) in Camera Space or possibly place them in Max Distance.
 
-#include"Buffers.h"
+#include"Renderer.h"
 class ParticleSystem : public Effect
 {
 public:
@@ -56,8 +56,8 @@ public:
 	float Angle;
 protected:
  
-	VAOBuffer *VAO;
-	VertexBuffer *Points;
+	VertexArrayObject *VAO;
+	VertexBufferObject<Vec3> *Points;
 	int NumberOfParticles = 0;
 };
 

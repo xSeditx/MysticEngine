@@ -1,6 +1,6 @@
 #pragma once
 
-/*
+/*========================================================================================================================================================================================
 
 WE IMPLIMENT THE API AS SUCH. 
 
@@ -70,10 +70,11 @@ void Render() override;
 void Update() override;
 ---- Updates any Transforms or Uniforms that will need to be bound using bind. This allows for seperation of the Rendering from the Physics if Implemented properly.
 
-*/
+========================================================================================================================================================================================*/
+
 #include"Component.h"
 #include"Window.h"
-#include"Buffers.h"
+#include"Renderer.h"
 #include"Material.h"
 #include"Object.h"
 

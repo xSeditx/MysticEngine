@@ -45,9 +45,9 @@ Emitter::Emitter(Vec3 position, int count)
 			RANDOM(0),
 			RANDOM(0), 1.0f));
 	}
-	VAO = new VAOBuffer();
-	VAO->Attach(new ColorBuffer(&Colors[0], Colors.size()));
-	VAO->Attach(new VertexBuffer(&System[0], size()));
+	VAO = new VertexArrayObject();
+	VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec4>(&Colors[0], Colors.size()));
+	VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&System[0], size()));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 void Emitter::Bind() 
@@ -73,7 +73,7 @@ void Emitter::Update()
 		System[Index].y += ( Dist * sin(RADIANS(Angle))); //RANDOM_SPREAD(.1);
 		System[Index].z += ( Dist * cos(RADIANS(Angle))); //RANDOM_SPREAD(.1);
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, VAO->GetVertexBuffer()->ID);
+	//glBindBuffer(GL_ARRAY_BUFFER, VAO->GetVertexBuffer()->ID);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, size() * sizeof(Vec4), &System[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 

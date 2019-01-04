@@ -1,8 +1,5 @@
 #pragma once
 
-
-
-
 // I HATE WARNINGS
 // #define _ITERATOR_DEBUG_LEVEL 0
 
@@ -31,9 +28,6 @@ class Camera;
 //#define TRACE
 //#define FUNCTION_TRACE
  
-
-
-
 #define RandomMinMax( min, max )      ((rand() % (int)(((max) + 1) - (min))) + (min))  
 #define RANDOM(x)                  ((rand() * (1.0 / (1.0 + RAND_MAX))) * (x))
 #define RANDOM_SPREAD(x)            (RANDOM(x * 2) - (x))                                    // Provides a Random number +/- the Given value

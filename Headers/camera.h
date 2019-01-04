@@ -1,5 +1,6 @@
 #pragma once
-#include"WindowGLSDL.h"
+
+
 #include<stack>
 #include"Renderer.h"
 #include"Component.h"

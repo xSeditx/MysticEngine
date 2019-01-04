@@ -1,5 +1,5 @@
 #pragma once
-
+// INCOMPLETE
 #include"Component.h"
 
 

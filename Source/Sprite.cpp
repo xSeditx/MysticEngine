@@ -159,9 +159,9 @@ Sprite::Sprite(char *name, Image *source, Vec2 dimensions, int numstates)
 		Vec2(0.0f,1.0f)
 	};
 
-	Polygons = new VAOBuffer();
-	Polygons->Attach(new VertexBuffer(&VertexData[0], 4));
-	Polygons->Attach(new IndexBuffer(&IndexData[0], 6));
+	VAO = new VertexArrayObject();
+	VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&VertexData[0], 4));
+	VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&IndexData[0], 6));
 
 	Surface = new Material();
 	Surface->Attach(SKIN_DIFFUSE, source);
@@ -216,14 +216,14 @@ void Sprite::Render()
 {
 	Update();
 	Bind();
-	glDrawElements(GL_TRIANGLES, Polygons->ElementCount(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, VAO->ElementCount, GL_UNSIGNED_INT, nullptr);
  
 }
 void Sprite::Render(Vec2 position)
 {
 	Update();
 	Bind();
-	glDrawElements(GL_TRIANGLES, Polygons->ElementCount(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_TRIANGLES, VAO->ElementCount, GL_UNSIGNED_INT, nullptr);
 }
 void Sprite::Bind()
 {
@@ -236,7 +236,7 @@ void Sprite::Bind()
 		);
 
 	Shader::GetActiveShader()->SetCacheUniforms(Transform, Viewport::Camera->ViewMatrix, Viewport::Camera->ProjectionMatrix);
-	Polygons->Bind();//<- Now... This Binds Texture Coords... However we do not want those coords I dont think... Or should I change them constantly.. maybe my frame updater changes the coords in here??? 
+	VAO->Bind();//<- Now... This Binds Texture Coords... However we do not want those coords I dont think... Or should I change them constantly.. maybe my frame updater changes the coords in here??? 
 	Surface->Bind();
 	Animations[CurrentState].Bind();// Better, Now each class contains its current state.
 
@@ -246,7 +246,7 @@ void Sprite::Bind()
 
 void Sprite::Unbind()
 {
-	Polygons->Unbind();
+	VAO->Unbind();
 	Surface->Unbind();
 	Animations[CurrentState].Unbind();
 	glPopMatrix();

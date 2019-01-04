@@ -1,15 +1,8 @@
 #pragma once
 
-
-#include"WindowGLSDL.h"
 #include"Window.h"
-
-
-
-
+#include<chrono>
 class Window;
-
-
 
 /*===============================================================================================================================================================================================
 //
@@ -19,7 +12,7 @@ class Window;
 //
 =================================================================================================================================================================================================*/
 
-#include<Chrono>
+
 class BenchMark
 {
 public:
@@ -83,9 +76,7 @@ void EngineErrorResponse(int error, const int data, char *str);
 
 /*===============================================================================================================================================================================================
 //
-//
 //      FILE AND ASSET MODULE
-//
 //
 =================================================================================================================================================================================================*/
 
@@ -93,11 +84,14 @@ void EngineErrorResponse(int error, const int data, char *str);
 #define glCheckError() glCheckError_(__FILE__, __LINE__) 
 
 
-
 GLenum glCheckError_(const char *file, int line);
+
 #define _ERROR_ 0x13
+
 // tried changing the 3D settings in the display control panel, but there is no noticeable effect.the only immediate solution I can think of is to 
 // use the Angle openGL replacement library, which converts opengl commands to directx, or to use a non - Intel video card.
+
+
 class  FileUtils
 {
 public:
@@ -273,8 +267,7 @@ private:
 std::ostream& operator<<(std::ostream &lhv, Vec2 const &rhv);
 std::ostream& operator<<(std::ostream &lhv, Vec3 const &rhv);
 std::ostream& operator<<(std::ostream &lhv, Vec4 const &rhv);
+Vec3 FindNormals(Vec3 verts);
+
 
 void SetOpenGLState();
-
-
-Vec3 FindNormals(Vec3 verts);
