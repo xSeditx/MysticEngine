@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Window">
+      <UniqueIdentifier>{ced66063-917a-4847-b756-ca4488ab43d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene">
+      <UniqueIdentifier>{7b978b72-7739-4206-8ad6-ab023a7d4e25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component">
+      <UniqueIdentifier>{9bc64ff1-305d-4291-899c-94d6db1ae759}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Camera">
+      <UniqueIdentifier>{25ae4911-2dcd-4228-9545-a7d58a5be274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Effect">
+      <UniqueIdentifier>{4fe9e84e-1904-4094-bf19-e654792375ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Script">
+      <UniqueIdentifier>{ee796ff6-bc77-4828-a649-7bad22e23822}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\GUI">
+      <UniqueIdentifier>{b7da26a5-95bf-4d6d-8aad-804fdb4f3f01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Mesh">
+      <UniqueIdentifier>{4183eed2-3f9b-4f40-8faf-641dd85b6de5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Audio">
+      <UniqueIdentifier>{0f4b8595-1b43-4508-b2f3-90dba75eeb05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Mesh\Material">
+      <UniqueIdentifier>{17cfb73a-b052-4641-a294-9c6d654076bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Buffers">
+      <UniqueIdentifier>{fc580e49-f68e-4728-85ce-e681ae3b6f1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Entity">
+      <UniqueIdentifier>{0d94625f-36c1-4af2-80af-56823fb5189a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Entity\AI">
+      <UniqueIdentifier>{2cdfec1b-09a3-49d8-84f3-5bfddf3de847}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Entity\Collision">
+      <UniqueIdentifier>{1488defe-1701-4475-b352-c94518086a13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Physics">
+      <UniqueIdentifier>{e537dc92-33c5-4beb-aeaa-301e0724dbc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Window\Scene\Component\Lights">
+      <UniqueIdentifier>{4d0f4cea-a4fe-4f08-b22d-83e006e56a79}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WindowGLFW.cpp">
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WindowGLSDL.cpp">
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FrameBuffer.cpp">
+      <Filter>Source Files\Window\Scene\Component\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Material.cpp">
+      <Filter>Source Files\Window\Scene\Component\Mesh\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Texture.cpp">
+      <Filter>Source Files\Window\Scene\Component\Mesh\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Shader.cpp">
+      <Filter>Source Files\Window\Scene\Component\Mesh\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Primative.cpp">
+      <Filter>Source Files\Window\Scene\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Sprite.cpp">
+      <Filter>Source Files\Window\Scene\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera.cpp">
+      <Filter>Source Files\Window\Scene\Component\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mesh.cpp">
+      <Filter>Source Files\Window\Scene\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUI.cpp">
+      <Filter>Source Files\Window\Scene\Component\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Effects.cpp">
+      <Filter>Source Files\Window\Scene\Component\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Particles.cpp">
+      <Filter>Source Files\Window\Scene\Component\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Script.cpp">
+      <Filter>Source Files\Window\Scene\Component\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Window.cpp">
+      <Filter>Source Files\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core.cpp">
+      <Filter>Source Files\Window\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Common.cpp">
+      <Filter>Source Files\Window\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component.cpp">
+      <Filter>Source Files\Window\Scene\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Light.cpp">
+      <Filter>Source Files\Window\Scene\Component\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Music.cpp">
+      <Filter>Source Files\Window\Scene\Component\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object.cpp">
+      <Filter>Source Files\Window\Scene\Component\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SoundEffects.cpp">
+      <Filter>Source Files\Window\Scene\Component\Audio</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Headers\camera.h">
+      <Filter>Source Files\Window\Scene\Component\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\GUI.h">
+      <Filter>Source Files\Window\Scene\Component\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Script.h">
+      <Filter>Source Files\Window\Scene\Component\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Core.h">
+      <Filter>Source Files\Window\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Common.h">
+      <Filter>Source Files\Window\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Component.h">
+      <Filter>Source Files\Window\Scene\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Window.h">
+      <Filter>Source Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\WindowGLSDL.h">
+      <Filter>Source Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\WindowGLFW.h">
+      <Filter>Source Files\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Sprite.h">
+      <Filter>Source Files\Window\Scene\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Mesh.h">
+      <Filter>Source Files\Window\Scene\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Primative.h">
+      <Filter>Source Files\Window\Scene\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\shader.h">
+      <Filter>Source Files\Window\Scene\Component\Mesh\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Texture.h">
+      <Filter>Source Files\Window\Scene\Component\Mesh\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Material.h">
+      <Filter>Source Files\Window\Scene\Component\Mesh\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Particles.h">
+      <Filter>Source Files\Window\Scene\Component\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Effects.h">
+      <Filter>Source Files\Window\Scene\Component\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Renderer.h">
+      <Filter>Source Files\Window\Scene\Component\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\FrameBuffer.h">
+      <Filter>Source Files\Window\Scene\Component\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\buffers.h">
+      <Filter>Source Files\Window\Scene\Component\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Light.h">
+      <Filter>Source Files\Window\Scene\Component\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Music.h">
+      <Filter>Source Files\Window\Scene\Component\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Object.h">
+      <Filter>Source Files\Window\Scene\Component\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SoundEffects.h">
+      <Filter>Source Files\Window\Scene\Component\Audio</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Basic.sfx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\Light.sfx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\ParticleShader.sfx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\FF.sfx">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Resources\GUI.sfx">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resources\OldShaders.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\API.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Future.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Resources\Removed.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+</Project>
