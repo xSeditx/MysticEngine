@@ -1,3 +1,4 @@
+#ifdef _AUDIODONE
 #include"Music.h"
  
 
@@ -43,3 +44,5 @@ void Music::SetVolume(int vol)
 void Music::InitializeMusic()
 {
 }
+
+#endif

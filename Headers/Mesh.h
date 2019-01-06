@@ -72,14 +72,14 @@ void Update() override;
 
 ========================================================================================================================================================================================*/
 
-#include"Component.h"
+#include"GameObject.h"
 #include"Window.h"
 #include"Renderer.h"
 #include"Material.h"
 #include"Object.h"
 
 
-class Mesh : public Object
+class Mesh : public GameObject
 {
 public:
 	Mesh();
@@ -88,4 +88,35 @@ public:
 	void Unbind() override;
 	void Render() override;
 	void Update() override;
+
+
+	Material Get_Surface() { return *Surface; }
+
+	int Get_ID() { return ID; } // TODO: This will prob become part of the GameObject class, perhaps part of the Asset class when fully implemented
+
+	inline void Mesh::Add(VertexArrayObject *vao) { VAO = vao; }
+	inline void Mesh::Add(Material *surface) { Surface = surface; }
+
+
+	void Mesh::LoadOBJ(char *file); // TODO: Might make this a static and return a pointer to the created object // WARNING: I do not like this and the SOB does not even work yet I don't think
+protected:
+
+	VertexArrayObject *VAO;
+	Material
+		*Surface;
 };
+
+
+/*
+GameObject
+---- Empty
+---- 2D
+---- 3D
+---- Sprite
+---- Effect
+---- Light
+---- Audio
+---- Video
+---- Camera
+
+*/

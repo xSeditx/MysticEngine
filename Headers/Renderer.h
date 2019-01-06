@@ -4,11 +4,12 @@
 
 #include<vector>
 
-#include "WindowGLSDL.h"
+#include"Window.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "FrameBuffer.h"
-
+#include"Texture.h"
+ 
 
 
 //=========================================== DEBUG SWITCHES ==========================================================
@@ -16,22 +17,8 @@
 #define      _UV_DEBUG    0
  //====================================================================================================================
 
-// LEFTOVERS FROM FIXED FUNCTION, DELETE SOON AS SURE ITS NOT NEEDED
-//#define VERTEX_ATTRIB     0
-//#define NORMAL_ATTRIB     1
-//#define TEXTURE_ATTRIB    2
-//#define COLOR_ATTRIB      3
-//
 #define BUFFER_OFFSET(i)   ((char *)NULL + (i))
  
-
-
-#include"Window.h"
-#include"Texture.h"
-#include"Renderer.h"
-
-//using namespace glm;
-
 
 struct Vertex
 {
@@ -81,7 +68,7 @@ public:
 		Data.resize(count);
 		Data.insert(Data.begin(), count, *data);
 		Stride = sizeof(T);
-		glGenBuffers(1, &ID);
+		_GL(glGenBuffers(1, &ID));
 		glBindBuffer(GL_ARRAY_BUFFER, ID);
 		glBufferData(GL_ARRAY_BUFFER, ElementCount * sizeof(T), data, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -94,7 +81,7 @@ public:
 		Data.resize(count);
 		Data.insert(Data.begin(), count, *data);
 		Stride = sizeof(T);
-		glGenBuffers(1, &ID);
+		_GL(glGenBuffers(1, &ID));
 		glBindBuffer(GL_ARRAY_BUFFER, ID);
 		glBufferData(GL_ARRAY_BUFFER, ElementCount * sizeof(T), data, access);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -106,18 +93,29 @@ public:
 
 	void Bind()
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, ID);
+		_GL(glBindBuffer(GL_ARRAY_BUFFER, ID));
 	}
 	void Unbind()
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, NULL);
 	}
 
-	void Map(GLenum accessflags);
-	void MapRange(int offset, int count, GLenum accessflags);
-	void Release();
-	void Destroy();
+	void Map(GLenum accessflags)
+	{
+		glMapBuffer(GL_ARRAY_BUFFER, accessflags);
+	}
+	void MapRange(int offset, int count, GLenum accessflags)
+	{
 
+	}
+	void Release()
+	{
+
+	}
+	void Destroy()
+	{
+		glDeleteBuffer(ID);
+	}
 
 	VertexBufferObject operator = (std::vector<T> data);          // Map the whole buffer, resize if needed and make the data of the buffer equal to that of the Rvalue
 	VertexBufferObject operator = (VertexBufferObject &other) { return other; }  // Same but perform a shallow copy of the buffer
@@ -185,7 +183,6 @@ public:
 
 		case BufferTypes::UVCOORD:
 			Amount = 2;
-			//Amount = buffer->ElementCount;
 			buffer->AttributeType = UVCOORD;
 
 			glBindBuffer(GL_ARRAY_BUFFER, buffer->ID);
@@ -244,6 +241,12 @@ static class DrawCall
 
 
 
+// LEFTOVERS FROM FIXED FUNCTION, DELETE SOON AS SURE ITS NOT NEEDED
+//#define VERTEX_ATTRIB     0
+//#define NORMAL_ATTRIB     1
+//#define TEXTURE_ATTRIB    2
+//#define COLOR_ATTRIB      3
+//
 
 
 

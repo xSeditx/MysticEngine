@@ -80,20 +80,14 @@ void Emitter::Update()
 //	VAO->Write(VAOBuffer::BufferTypes::Vertextype, &System[0], size() * 3);
 
 }
-// END_HERE_WITH_ERRORS 3:46am 12/29/2018
-//GLuint AttribLoc = glGetAttribLocation(Shader::GetActiveShader()->GetName(), "VertexPosition");
-//glVertexAttribPointer(AttribLoc, 3, GL_FLOAT, false, 0, vertex_data); // vertex_data is a float*, 3 per vertex, representing the position of each vertex
 
 void Emitter::Render()
 {
 //	Print("UNTESTED PARTICLE CLASS RENDERER CALLED");
 	Update();
-	Shader::GetActiveShader()->SetCacheUniforms
-	(
-		Transform,                             // Model Matrix
-		Viewport::Camera->ViewMatrix,          // View Matrix
-		Viewport::Camera->ProjectionMatrix     // Projection Matrix
-	);
+	Viewport::Camera->Bind();
+	Shader::Shader::GetActiveShader()->SetUniformCacheMat4(Shader::Shader::GetActiveShader()->ModelMatrixLOC, Transform);
+ 
 	glPointSize(4);
 	Bind();
 	glDrawArrays(GL_POINTS, 0, size());

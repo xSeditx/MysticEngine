@@ -34,7 +34,7 @@ void Scene::Render()
 		Surface->Bind();
 	}
 
-	Lights[0].Bind(); // TODO: Make a Component class of which all things such as Lights, Cameras and Objects all inheirit from. With the use of an std::Unordered map I can look up and Camera, Object or Light as simple as calling it by name.
+	Lights[0].Bind(); // TODO: Make a GameObject class of which all things such as Lights, Cameras and Objects all inheirit from. With the use of an std::Unordered map I can look up and Camera, Object or Light as simple as calling it by name.
 	Camera.Update();
 
 	for (auto& G : Groups)
@@ -77,12 +77,12 @@ Group::Group()
 {
 	Surface = NULL;
 }
-void Group::Add(Object *object)
+void Group::Add(Mesh *object)
 {
 	Objects.push_back(object);
 	ObjectCount++;
 }
-void Group::Add(Object* object, Material *surface)
+void Group::Add(Mesh* object, Material *surface)
 {
 	object->Add(surface);
 	Objects.push_back(object);

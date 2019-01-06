@@ -301,3 +301,12 @@ void GetOpenGLState()
 }
 
 float Squared(float x) { return x*x; }
+
+
+float GetDistance(Vec3 p1, Vec3 p2)
+{
+	return
+		sqrt(Squared(p1.x - p2.x) +
+		Squared(p1.y - p2.y) +
+		Squared(p1.z - p2.x));
+}

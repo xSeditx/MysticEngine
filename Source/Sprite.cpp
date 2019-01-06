@@ -235,7 +235,9 @@ void Sprite::Bind()
 			glm::vec3(0.0f, 1.0f, 0.0f)
 		);
 
-	Shader::GetActiveShader()->SetCacheUniforms(Transform, Viewport::Camera->ViewMatrix, Viewport::Camera->ProjectionMatrix);
+	Viewport::Camera->Bind();
+	Shader::Shader::GetActiveShader()->SetUniformCacheMat4(Shader::Shader::GetActiveShader()->ModelMatrixLOC, Transform);
+ 
 	VAO->Bind();//<- Now... This Binds Texture Coords... However we do not want those coords I dont think... Or should I change them constantly.. maybe my frame updater changes the coords in here??? 
 	Surface->Bind();
 	Animations[CurrentState].Bind();// Better, Now each class contains its current state.

@@ -33,18 +33,7 @@ Viewport::Viewport(Vec3 position, Vec3 rotation)
 	ViewMatrix = Matrix(1.0f);
 	Camera = this;
 }
-void Viewport::Update()
-{
-	ViewMatrix = Matrix(1.0);
-//	ViewMatrix = RotateX(Rotation.x) * RotateY(Rotation.y) * (glm::translate(glm::mat4(1.0f), Position)); //  (Pitch *  Yaw) *RotateZ(RADIANS(1)) * 
-	RotateX(Rotation.x);
-	RotateY(Rotation.y);
-	Translate(Position);
-	Up = glm::normalize(Vec3(ViewMatrix[0][1], ViewMatrix[1][1], ViewMatrix[2][1]));
-	Right = glm::normalize(Vec3(ViewMatrix[0][0], ViewMatrix[1][0], ViewMatrix[2][0]));
-	Forward = glm::normalize(Vec3(ViewMatrix[0][2], ViewMatrix[1][2], ViewMatrix[2][2]));
-	ViewMatrix = glm::lookAt(Position, Position - Forward, Up);
-}
+
 void Viewport::Rotate(float pitch, float yaw)
 {
 	Rotation.x -= yaw * RADIANS(.9);//.005;  IT WAS .5 on both
@@ -93,7 +82,6 @@ void Viewport::RotateZ(GLfloat angle)
 	   	      0.0f, 0.0f,       0.0f, 1.0f
 	};
 }
-
 void Viewport::Translate(Vec3 pos)
 {
 	ViewMatrix *= (glm::translate(glm::mat4(1.0f), pos));
@@ -101,6 +89,33 @@ void Viewport::Translate(Vec3 pos)
 
 
 void Viewport::Bind()
+{
+	Shader::GetActiveShader()->SetUniformCacheMat4(Shader::GetActiveShader()->ProjectionMatrixLOC, ProjectionMatrix);
+	Shader::GetActiveShader()->SetUniformCacheMat4(Shader::GetActiveShader()->ViewMatrixLOC, ViewMatrix);
+}
+
+ 
+
+
+
+void Viewport::Unbind()
+{
+}
+void Viewport::Update()
+{
+	ViewMatrix = Matrix(1.0);
+	//	ViewMatrix = RotateX(Rotation.x) * RotateY(Rotation.y) * (glm::translate(glm::mat4(1.0f), Position)); //  (Pitch *  Yaw) *RotateZ(RADIANS(1)) * 
+	RotateX(Rotation.x);
+	RotateY(Rotation.y);
+	Translate(Position);
+
+	Up = glm::normalize(Vec3(ViewMatrix[0][1], ViewMatrix[1][1], ViewMatrix[2][1]));
+	Right = glm::normalize(Vec3(ViewMatrix[0][0], ViewMatrix[1][0], ViewMatrix[2][0]));
+	Forward = glm::normalize(Vec3(ViewMatrix[0][2], ViewMatrix[1][2], ViewMatrix[2][2]));
+	ViewMatrix = glm::lookAt(Position, Position - Forward, Up);
+}
+
+void Viewport::Render()
 {
 
 }

@@ -3,7 +3,7 @@
 
 #include<stack>
 #include"Renderer.h"
-#include"Component.h"
+#include"GameObject.h"
 //== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
 ///        CAMERA 
 /*===============================================================================================================================================================
@@ -16,7 +16,7 @@
 */
 
  
-class Viewport : public Component
+class Viewport : public GameObject
 {
 public:
 	Viewport() :
@@ -90,6 +90,10 @@ public:
 
 
 	void Bind();
+	void Unbind();
+ 
+	void Render();
+
 private:
 
 	MatrixMode CurrentMatrixMode;

@@ -26,6 +26,15 @@ public:
 
 	float Radius;
 };
+class GeoSphere : public Mesh
+{
+public:
+	GeoSphere() {}
+	GeoSphere(Vec3 pos, float radius, int sectors);
+	GeoSphere(Vec3 pos, float radius, int sectors, Material *surface);
+
+	float Radius;
+};
 class Plane : public Mesh
 {
 public:

@@ -271,3 +271,9 @@ Vec3 FindNormals(Vec3 verts);
 
 
 void SetOpenGLState();
+
+
+
+
+
+float GetDistance(Vec3 p1, Vec3 p2);

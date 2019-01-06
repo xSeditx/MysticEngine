@@ -1,10 +1,10 @@
 #pragma once
 // INCOMPLETE
-#include"Component.h"
+#include"GameObject.h"
 
 
 
-class Script : public Component
+class Script : public GameObject
 {
 public:
 	Script();

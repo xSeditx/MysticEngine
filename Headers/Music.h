@@ -1,3 +1,4 @@
+#ifdef _AUDIODONE
 #pragma once
 // TODO: MUCH WORK TO BE DONE, JUST A SIMPLE CLASS MORE OF A PLACEHOLDER THAN ANYTHING HOWEVER IT IS FUNCTIONAL
 
@@ -33,3 +34,5 @@ public:
 		*BackgroundMusic,
 		*BackgroundMusic2;
 };
+
+#endif

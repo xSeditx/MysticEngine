@@ -128,12 +128,30 @@ void Shader::AttachUniform(GLchar *name, Uniformtype type, void *variable)
 {
 	Uniforms.push_back(Uniform(type, name, variable));
 }
-void Shader::SetCacheUniforms(Matrix m, Matrix v , Matrix p)
+void Shader::SetUniformCache1f(GLuint loc, float value)
 {
-	_GL(glUniformMatrix4fv(ModelMatrixLOC, 1, GL_FALSE, glm::value_ptr(m)));
-	_GL(glUniformMatrix4fv(ViewMatrixLOC, 1, GL_FALSE, glm::value_ptr(v)));
-	_GL(glUniformMatrix4fv(ProjectionMatrixLOC, 1, GL_FALSE, glm::value_ptr(p)));
+	glUniform1f(loc, value);
 }
+void Shader::SetUniformCache1Int(GLuint loc, int value) {
+	glUniform1i(loc, value);
+}
+void Shader::SetUniformCache2f(GLuint loc, Vec2 &vector) {
+	glUniform2f(loc, vector.x, vector.y);
+}
+void Shader::SetUniformCache3f(GLuint loc, Vec3 &vector) {
+	glUniform3f(loc, vector.x, vector.y, vector.z);
+}
+void Shader::SetUniformCache4f(GLuint loc, Vec4 &vector) {
+	glUniform4f(loc, vector.x, vector.y, vector.z, vector.w);
+}
+void Shader::SetUniformCacheMat4(GLuint loc, Matrix &matrix) {
+	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+
+
+
+
 
 GLint Shader::GetUniformLocation(GLchar *name)
 {
@@ -143,6 +161,20 @@ GLuint Shader::GetName()
 {
 	return ID;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -160,12 +192,12 @@ void Shader::GetShaderError(ErrorType T)
 {
 	GLint length = 0;
 	GLint result;
-	char *error;
+	char *error = "";
 	switch (T)
 	{
 	case Vert:
 
-		glGetShaderiv(VertID, GL_COMPILE_STATUS, &result);
+		_GL(glGetShaderiv(VertID, GL_COMPILE_STATUS, &result));
 
 		if (result == GL_FALSE)
 		{

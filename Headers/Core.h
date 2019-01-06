@@ -31,7 +31,7 @@ _______________________________________________________________________________
 #include "material.h"
 #include "mesh.h"
 #include "Light.h"
-#include "Component.h"
+#include "GameObject.h"
 
 
 ///      ENGINE 
@@ -86,14 +86,14 @@ _________________										  //
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-class Group : public Object
+class Group : public Mesh
 {
 public:
 	Group();
 	Vec3 Position = Vec3(0.0f);
 	Vec3 Rotation = Vec3(0.0f);
 
-	std::vector<Object*> Objects;
+	std::vector<Mesh*> Objects;
 
 	Material *Surface = NULL;
 
@@ -101,8 +101,8 @@ public:
 
 	int ObjectCount = 0;
 
-	void Add(Object *object);
-	void Add(Object *object, Material *surface);
+	void Add(Mesh *object);
+	void Add(Mesh *object, Material *surface);
 	void Attach(Material *surface);
 	void Attach(Shader *shader);
 

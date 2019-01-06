@@ -15,7 +15,8 @@ enum Skinenum
 	SKIN_GLOW,
 	SKIN_SPECULAR,
 };
-
+// The texture material could possibly be subclassed out for the various types and when we bind a material instead of all material being one we could perform a range for loop for all materials attached to a specific object. 
+// I like the idea but do not know if it would fit well with this sort of engine.
 class Material
 {
 public:

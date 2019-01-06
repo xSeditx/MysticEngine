@@ -1,9 +1,9 @@
 
-#define __TEST_2D
+//#define __TEST_2D
 #define __TEST_3D
-#define __ECHO
+//#define __ECHO
 //#define __TEST_PARTICLES
-//#define __TEST_MESH
+#define __TEST_MESH
 
 
 #include"Window.h"
@@ -130,8 +130,8 @@ void main()
 			//GMesh *GTest = new GMesh();
 			//GTest->MakeCube(pos, 2);
 			//MainWin.World->Groups[0].Add(GTest, BrickMaterial());
-
-			Block *b = new Block(pos, 2);
+ 
+ 		 	Block *b = new Block(pos, 2);
 			MainWin.World->Groups[0].Add(b, BrickMaterial()); //; Sphere(pos, 1, 30)
 		}
 	}
@@ -154,16 +154,15 @@ void main()
 #endif
 
 #ifdef __TEST_MESH
-	Mesh *DragonObject = new Mesh();
-	DragonObject->LoadOBJ("Resources\\Robot.obj");
+	//Mesh *DragonObject = new Mesh();
+	//DragonObject->LoadOBJ("Resources\\dragon.obj");
+	//MainWin.World->Groups[0].Add(DragonObject, BrickMaterial());
 #endif
-
 
 
 	float
 		Xangle = 0,
 		Yangle = 0;
-
 
 	while (MainWin.EventLoop())
 	{

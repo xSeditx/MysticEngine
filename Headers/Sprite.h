@@ -135,7 +135,7 @@ public:
 private:
 	std::vector<Frame>& AddFrame(Frame frame);
 };
-class Sprite : public Object
+class Sprite : public Mesh
 {
 public:
 	Sprite(char *name, Image *source, Vec2 dimensions, int numstates);

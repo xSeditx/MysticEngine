@@ -64,15 +64,23 @@ public:
 	void Shader::Disable();
 
 	std::vector<Uniform> Uniforms;
+
 	void Shader::SetUniform1f(GLchar *name, float value);
 	void Shader::SetUniform1Int(GLchar *name, int value);
 	void Shader::SetUniform2f(GLchar *name, Vec2 &vector);
 	void Shader::SetUniform3f(GLchar *name, Vec3 &vector);
 	void Shader::SetUniform4f(GLchar *name, Vec4 &vector);
 	void Shader::SetUniformMat4(GLchar *name, Matrix &matrix);
+
+	void Shader::SetUniformCache1f(GLuint loc, float value);
+	void Shader::SetUniformCache1Int(GLuint loc, int value);
+	void Shader::SetUniformCache2f(GLuint loc, Vec2 &vector);
+	void Shader::SetUniformCache3f(GLuint loc, Vec3 &vector);
+	void Shader::SetUniformCache4f(GLuint loc, Vec4 &vector);
+	void Shader::SetUniformCacheMat4(GLuint loc, Matrix &matrix);
+
 	void Shader::SetTexture(GLchar *name, int slot);
 	void Shader::AttachUniform(GLchar *name, Uniformtype type, void *variable);
-	void Shader::SetCacheUniforms(Matrix m, Matrix v, Matrix p);
 
 	GLint Shader::GetUniformLocation(GLchar *name);
 	GLuint Shader::GetName();

@@ -13,16 +13,15 @@ Light::Light(Vec3 pos, Vec3 ambient, Vec3 diffuse, Vec3 specular)
 	Vec3 AmbientColor = ambient;
 	Vec3 DiffuseColor = diffuse;
 	Vec3 SpecularColor = specular;
+
+	Transform = glm::mat4(1.0f); // Set Identity and Rotate all axis followed with the Translation.
+	Transform = glm::translate(Transform, Position);
+	Transform = glm::rotate(Transform, glm::radians(Rotation.x), Vec3(1.0f, 0.0f, 0.0f));
+	Transform = glm::rotate(Transform, glm::radians(Rotation.y), Vec3(0.0f, 1.0f, 0.0f));
+	Transform = glm::rotate(Transform, glm::radians(Rotation.z), Vec3(0.0f, 0.0f, 1.0f));
+	Transform = glm::scale(Transform, Vec3(1.0f));
 }
 
-//void Light::SetRotation(Vec3 rot)
-//{
-//	Rotation = rot;
-//}
-//void Light::SetPosition(Vec3 pos)
-//{
-//	Position = pos;
-//}
 void Light::Set(Lighttype which, Vec3 value)
 {
 	switch (which)
@@ -53,13 +52,20 @@ void Light::Bind()
 	Shader::GetActiveShader()->SetUniform3f("DiffuseLight", DiffuseColor);
 	Shader::GetActiveShader()->SetUniform3f("SpecularLight", SpecularColor);
 	Shader::GetActiveShader()->SetUniform3f("LightPosition1", Position);
-	
 }
 void Light::Unbind()
 {
+	//NOTHING TO REALLY UNBIND HERE IS THERE?
 }
+void Light::Update()
+{
+	Transform = glm::mat4(1.0f); // Set Identity and Rotate all axis followed with the Translation.
+	Transform = glm::translate(Transform, Position);
+	Transform = glm::rotate(Transform, glm::radians(Rotation.x), Vec3(1.0f, 0.0f, 0.0f));
+	Transform = glm::rotate(Transform, glm::radians(Rotation.y), Vec3(0.0f, 1.0f, 0.0f));
+	Transform = glm::rotate(Transform, glm::radians(Rotation.z), Vec3(0.0f, 0.0f, 1.0f));
 
-
+}
 
 void Light::Render()
 {
@@ -68,6 +74,8 @@ void Light::Render()
 //glColor3f(GL_Color(AmbientColor.r), GL_Color(AmbientColor.g), GL_Color(AmbientColor.b));
 //glVertex3f(Position.x, Position.y, Position.z);
 //glEnd();
+
+// PERFORM SHADOW MAPPING HERE.
 	Visual->Render();
 }
 
@@ -82,3 +90,12 @@ void Light::Render()
 
 
 //ViewMatrix * ModelMatrix * (Light * ModelMatrix)
+
+//void Light::SetRotation(Vec3 rot)
+//{
+//	Rotation = rot;
+//}
+//void Light::SetPosition(Vec3 pos)
+//{
+//	Position = pos;
+//}

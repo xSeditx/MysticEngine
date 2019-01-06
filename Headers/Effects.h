@@ -1,18 +1,16 @@
 #pragma once
-#include"Component.h"
-
+#include"GameObject.h"
 #include"Mesh.h"
 
 
 
 
-
-class Effect : public Object
+class Effect : public Mesh
 {
 public:
 	Effect::Effect()
 	//	:
-	//	Component()
+	//	GameObject()
 	{
 
 	}

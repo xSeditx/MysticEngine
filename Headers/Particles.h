@@ -3,8 +3,6 @@
 
 #include"Effects.h"
 
-
-
 // TODO: So much to do here. Basically need to fully implement a particle system. Something I have done 100 times before.
 
 

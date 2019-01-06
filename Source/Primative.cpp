@@ -237,7 +237,7 @@ Block::Block(Vec3 pos, float size)
     VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&VertexList[0], 24));
 	VAO->Attach(BufferTypes::UVCOORD, new VertexBufferObject<Vec2>(&TextureCoords[0], 24));
 	VAO->Attach(BufferTypes::NORMAL, new  VertexBufferObject<Vec3>(&NormalList[0], 24));
-	VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec4>(&Cols[0], 24));
+//	VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec4>(&Cols[0], 24));
 	VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&IndexList[0], 36));
 
 	Transform = glm::mat4(1.0f); // Set Identity and Rotate all axis followed with the Translation.
@@ -651,7 +651,7 @@ Sphere::Sphere(Vec3 pos, float radius, int sectors)
    VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&Verts[0], VertexCount));
    VAO->Attach(BufferTypes::UVCOORD, new VertexBufferObject<Vec2>(&UV[0], VertexCount));
    VAO->Attach(BufferTypes::NORMAL, new  VertexBufferObject<Vec3>(&Norm[0], VertexCount));
-   VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec3>(&Col[0], ColorCount));
+//   VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec3>(&Col[0], ColorCount));
    VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&Ind[0], IndexCount));
 
 }
@@ -728,7 +728,13 @@ Plane::Plane(Vec3 pos, Vec3 rotation, float width, float height)
 
 
 
-
+GeoSphere::GeoSphere(Vec3 pos, float radius, int sectors)
+	:
+	Radius(radius)
+{
+	Position = pos;
+	Rotation = Vec3(rand() % 360, rand() % 360, rand() % 360);
+}
 
 
  

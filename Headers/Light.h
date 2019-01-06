@@ -1,9 +1,9 @@
 #pragma once
 #include"Window.h"
-#include"Component.h"
+#include"GameObject.h"
 
 class Cube;
-class Light : public Component
+class Light : public GameObject
 {
 public:
 	Light();
@@ -22,7 +22,9 @@ public:
 
 	void Bind();
 	void Unbind();
+	void Update();
 	void Render();
+
 
 	Vec3 AmbientColor = Vec3(0.2f);
 	Vec3 DiffuseColor = Vec3(0.5f);
