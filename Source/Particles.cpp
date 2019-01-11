@@ -4,7 +4,7 @@
 
 
 
-ParticleSystem::ParticleSystem(){}
+ParticleSystem::ParticleSystem() {}
 
 void ParticleSystem::Bind() {}
 void ParticleSystem::Unbind() {}
@@ -50,13 +50,12 @@ Emitter::Emitter(Vec3 position, int count)
 	VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&System[0], size()));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-void Emitter::Bind() 
+void Emitter::Bind()
 {
-	VAO->Bind(); 
+	VAO->Bind();
 }
 void Emitter::Unbind() {}
-
-void Emitter::Update() 
+void Emitter::Update()
 {
 	Transform = glm::mat4(1.0f); // Set Identity and Rotate all axis followed with the Translation.
 	Transform = glm::translate(Transform, Position);
@@ -69,32 +68,31 @@ void Emitter::Update()
 
 	for_loop(Index, size())
 	{
-		System[Index].x += ( Dist * cos(RADIANS(Angle)));//RANDOM_SPREAD(.1);
-		System[Index].y += ( Dist * sin(RADIANS(Angle))); //RANDOM_SPREAD(.1);
-		System[Index].z += ( Dist * cos(RADIANS(Angle))); //RANDOM_SPREAD(.1);
+		System[Index].x += (Dist * cos(RADIANS(Angle)));//RANDOM_SPREAD(.1);
+		System[Index].y += (Dist * sin(RADIANS(Angle))); //RANDOM_SPREAD(.1);
+		System[Index].z += (Dist * cos(RADIANS(Angle))); //RANDOM_SPREAD(.1);
 	}
 	//glBindBuffer(GL_ARRAY_BUFFER, VAO->GetVertexBuffer()->ID);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, size() * sizeof(Vec4), &System[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-//	VAO->Write(VAOBuffer::BufferTypes::Vertextype, &System[0], size() * 3);
+	//	VAO->Write(VAOBuffer::BufferTypes::Vertextype, &System[0], size() * 3);
 
 }
-
 void Emitter::Render()
 {
-//	Print("UNTESTED PARTICLE CLASS RENDERER CALLED");
+	//	Print("UNTESTED PARTICLE CLASS RENDERER CALLED");
 	Update();
 	Viewport::Camera->Bind();
 	Shader::Shader::GetActiveShader()->SetUniformCacheMat4(Shader::Shader::GetActiveShader()->ModelMatrixLOC, Transform);
- 
+
 	glPointSize(4);
 	Bind();
 	glDrawArrays(GL_POINTS, 0, size());
 }
 
 
-  
+
 
 FlowFieldParticleSystem::FlowFieldParticleSystem() {}
 

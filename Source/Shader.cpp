@@ -45,12 +45,12 @@ Shader::~Shader()
 {
 	Delete();
 }
-void Shader::Delete()
+  void Shader::Delete()
 {
 	Print("Called the Shader Destructor: " << Filepath);
 	glDeleteProgram(ID);
 }
-void Shader::Enable()
+  void Shader::Enable()
 {
 
 // TODO: WE HAVE A PROBLEM HERE WHICH NEEDS TO BE CORRECTED
@@ -86,7 +86,7 @@ void Shader::Enable()
 		}
 //	}
 }
-void Shader::Disable()
+  void Shader::Disable()
 {
 	ActiveShader.pop();
 #ifdef _USE_SHADER_EXTENSIONS
@@ -96,68 +96,63 @@ void Shader::Disable()
 #endif
 }
  
-void Shader::SetUniform1f(GLchar *name, float value)
+  void Shader::SetUniform1f(GLchar *name, float value)
 {
 	glUniform1f(GetUniformLocation(name), value);
 }
-void Shader::SetUniform1Int(GLchar *name, int value)
+  void Shader::SetUniform1Int(GLchar *name, int value)
 {
 	glUniform1i(GetUniformLocation(name), value);
 }
-void Shader::SetUniform2f(GLchar *name, Vec2 &vector)
+  void Shader::SetUniform2f(GLchar *name, Vec2 &vector)
 {
 	glUniform2f(GetUniformLocation(name), vector.x, vector.y);
 }
-void Shader::SetUniform3f(GLchar *name, Vec3 &vector)
+  void Shader::SetUniform3f(GLchar *name, Vec3 &vector)
 {
 	_GL(glUniform3f(GetUniformLocation(name), vector.x, vector.y, vector.z));
 }
-void Shader::SetUniform4f(GLchar *name, Vec4 &vector)
+  void Shader::SetUniform4f(GLchar *name, Vec4 &vector)
 {
 	glUniform4f(GetUniformLocation(name), vector.x, vector.y, vector.z, vector.w);
 }
-void Shader::SetUniformMat4(GLchar *name, Matrix &matrix)
+  void Shader::SetUniformMat4(GLchar *name, Matrix &matrix)
 {
 	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(matrix));
 }
-void Shader::SetTexture(GLchar *name, int slot)
+  void Shader::SetTexture(GLchar *name, int slot)
 {
 	glUniform1i(GetUniformLocation(name), slot);
 }
-void Shader::AttachUniform(GLchar *name, Uniformtype type, void *variable)
+  void Shader::AttachUniform(GLchar *name, Uniformtype type, void *variable)
 {
 	Uniforms.push_back(Uniform(type, name, variable));
 }
-void Shader::SetUniformCache1f(GLuint loc, float value)
+  void Shader::SetUniformCache1f(GLuint loc, float value)
 {
 	glUniform1f(loc, value);
 }
-void Shader::SetUniformCache1Int(GLuint loc, int value) {
+  void Shader::SetUniformCache1Int(GLuint loc, int value) {
 	glUniform1i(loc, value);
 }
-void Shader::SetUniformCache2f(GLuint loc, Vec2 &vector) {
+  void Shader::SetUniformCache2f(GLuint loc, Vec2 &vector) {
 	glUniform2f(loc, vector.x, vector.y);
 }
-void Shader::SetUniformCache3f(GLuint loc, Vec3 &vector) {
+  void Shader::SetUniformCache3f(GLuint loc, Vec3 &vector) {
 	glUniform3f(loc, vector.x, vector.y, vector.z);
 }
-void Shader::SetUniformCache4f(GLuint loc, Vec4 &vector) {
+  void Shader::SetUniformCache4f(GLuint loc, Vec4 &vector) {
 	glUniform4f(loc, vector.x, vector.y, vector.z, vector.w);
 }
-void Shader::SetUniformCacheMat4(GLuint loc, Matrix &matrix) {
+  void Shader::SetUniformCacheMat4(GLuint loc, Matrix &matrix) {
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
-
-
-
-
-
-GLint Shader::GetUniformLocation(GLchar *name)
+  GLint Shader::GetUniformLocation(GLchar *name)
 {
 	return glGetUniformLocation(ID, name);
 }
-GLuint Shader::GetName()
+  GLuint Shader::GetName()
 {
 	return ID;
 }
@@ -188,7 +183,7 @@ GLuint Shader::ColorsLocation;
 GLuint Shader::NormalsLocation;
 
 
-void Shader::GetShaderError(ErrorType T)
+  void Shader::GetShaderError(ErrorType T)
 {
 	GLint length = 0;
 	GLint result;
@@ -239,11 +234,11 @@ void Shader::GetShaderError(ErrorType T)
 }
 
 // THIS THESE TWO ARE GOING TO GO..... [12/30/18]MAYBE.....
-void Shader::Push(Shader *shad)
+  void Shader::Push(Shader *shad)
 {
 	ActiveShader.push(shad);
 }
-Shader* Shader::Pop()
+  Shader* Shader::Pop()
 {
 	Shader *ret = ActiveShader.top();
 	ActiveShader.pop();
@@ -255,7 +250,7 @@ Shader* Shader::Pop()
 #include<fstream>
 #include<sstream>
 
-GLuint Shader::Load()
+  GLuint Shader::Load()
 {
 #ifdef _USE_SHADER_EXTENSIONS 
 

@@ -96,16 +96,16 @@ Image::Image(char* name, GLenum param, const char *filename)
 //	ID = Manager.Add(this);
 }
 
-void Image::Bind()
+  void Image::Bind()
 {
 	_GL(glBindTexture(GL_TEXTURE_2D, ID));
 }
-void Image::Unbind()
+  void Image::Unbind()
 {
 	_GL(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-GLubyte* Image::LoadBMP(const char *filename)
+  GLubyte* Image::LoadBMP(const char *filename)
 {
 	FILE *File = fopen(filename, "rb");
 	if (!File)
@@ -151,13 +151,13 @@ GLubyte* Image::LoadBMP(const char *filename)
 
 	return imagedata;
 }
-inline void Image::SetSize(float width, float height)
+  inline void Image::SetSize(float width, float height)
 {
 	Width = width;
 	Height = height;
 }
 
-void Image::GenColorTexture(float W, float H)
+  void Image::GenColorTexture(float W, float H)
 {
 	Width = W;
 	Height = H;
@@ -174,7 +174,7 @@ void Image::GenColorTexture(float W, float H)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
-void Image::GenDepthTexture(float W, float H)
+  void Image::GenDepthTexture(float W, float H)
 {
 	Width = W;
 	Height = H;
@@ -200,12 +200,12 @@ void Image::GenDepthTexture(float W, float H)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, Width, Height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 }
 
-GLint Image::MaxTextureSize()
+  GLint Image::MaxTextureSize()
 {
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &MaxTexture);
 	return MaxTexture;
 }
-void Image::VerticalFlip()
+  void Image::VerticalFlip()
 {
 	int row;
 	size_t bytes_per_row = (size_t)Width * 4;
@@ -254,11 +254,11 @@ UVBuffer::UVBuffer(Vec2 *d, GLsizei coun)   ///UVBuffer::UVBuffer(Image &img, Ve
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vec2) * coun, d, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-void UVBuffer::Bind()
+  void UVBuffer::Bind()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 }
-void UVBuffer::Unbind()
+  void UVBuffer::Unbind()
 {
 #ifdef _DEBUG
 	//  glDisableClientState(GL_TEXTURE_COORD_ARRAY);

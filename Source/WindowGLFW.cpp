@@ -18,28 +18,18 @@
 
 #include<Thread>
 
-Window *Window::SCREEN;
-int BenchMark::ObjectCounter = 0;
-long long BenchMark::AverageTimer = 0;
-long long BenchMark::AverageResult = 0;
+Window *Window::SCREEN = nullptr;
 
-
-
-
-
-
-
+#include"Common.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                      /* Construct Window */                                                                                        //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Window::Window(int x,int y,int w,int h,char* title)
-      : X(x),
-        Y(y),
-        WIDTH(w), 
-        HEIGHT(h), 
-        TITLE(title),
+      : Position(Vec2(0)),
+        Size(Vec2(0)),
+        Title(title),
         TIMER( std::clock()),
         FRAME_COUNT(0),
         FPS(0),
@@ -50,10 +40,12 @@ Window::Window(int x,int y,int w,int h,char* title)
         glewExperimental = GL_TRUE;
         if (!glfwInit())exit(-1);
 
+
 //------------------------------------------------------- GLFW Window Hints	--------------------------------------------------------------------------------------------  
         glfwWindowHint(GLFW_SAMPLES              ,   1); // 4x antialiasing
-       // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,    2.6); // Min and Max supported OpenGL versions
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,    0);
+
+//        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,   3); // Min and Max supported OpenGL versions
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,   1);
         glfwWindowHint(GLFW_RESIZABLE            , true);
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------	    
 	    
@@ -74,21 +66,27 @@ Window::Window(int x,int y,int w,int h,char* title)
         glfwSetDropCallback        (glCONTEXT, DropFile_callback);	               // Callback Allows Files to be dropped into the window and get the path read
         glfwSetMouseButtonCallback (glCONTEXT, Mouse_Callback);                    // Callback for Mouse Button Click
         glfwSetCursorPosCallback   (glCONTEXT, MouseMove_Callback);                // Callback to return Mouse Position			 
-        glfwSetWindowPosCallback   (glCONTEXT, Window_Size_Callback);              // Callback to return Window Position
+        glfwSetWindowPosCallback   (glCONTEXT, Window_Move_Callback);              // Callback to return Window Position
         glfwSetWindowSizeCallback  (glCONTEXT, Resize_Callback);                   // Callback when Window is Resized
         glfwSetWindowCloseCallback (glCONTEXT, Window_close_callback);             // Callback when Closed
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------	    
-        glViewport(0,0, WIDTH, HEIGHT);
-        MOUSE.MouseMoveX = 0;
-        MOUSE.MouseMoveY = 0;
-        MOUSE.Action     = 0;
+        glViewport(0,0, Size.x, Size.y);
+
+        Mouse.Action = 0;
 
         Keyboard.Key = 0;
         Keyboard.Scancode = 0;  
         Keyboard.Action = 0;
         Keyboard.Modifications = 0;
-        for(int count = 0; count < 350;count++)SCREEN->Keyboard.KEY_STATES[count] = 0;	// NULLIFY the KEYBOARD ARRAY
- 
+
+
+		for (int count = 0; count < 350;count++)
+		{
+			SCREEN->Keyboard.KEY_STATES[count] = 0;	// NULLIFY the KEYBOARD ARRAY
+		}
+
+
         SetActiveWindow(this);
   
         if (glewInit())
@@ -113,133 +111,174 @@ Window::Window(int x,int y,int w,int h,char* title)
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glTranslatef(0, 0, 0);
-
+		SCREEN->FRAME_COUNT = 0;
+		Mouse.Offset = Vec2(1);
 //-------------------------------------------------------------------------------------------      
+		glViewport(0, 0, w, h);
 }
-void Window::SetOrthographic(int width, int height)
-{ 
-    WIDTH  = width;
-    HEIGHT = height;
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0f, WIDTH, HEIGHT, 0.0f, 0.0f, 1000.0f);
-}
+
 
 //______________________________________________________________________________________________________________________________________________________________________
 //*Best view in collapsed mode*           CALLBACK FUNCTIONS
 //______________________________________________________________________________________________________________________________________________________________________
-void Window::Error_callback        (int error, const char* description)
+void Window::Error_callback(int error, const char* description)
 {
 #if _CALLBACK_DEBUG
-    Print("Error Callback");
+	Print("Error Callback");
 #endif
-        std::cout << "WINDOW ERROR CALLBACK: " << glewGetErrorString(error); // << std::end;
-        fprintf(stderr, "Error: %s\n", description);
+	Print("WINDOW ERROR CALLBACK: " << glewGetErrorString(error)); // << std::end;
+	Print(stderr << " Error: %s\n " << description);
 }
 void Window::Resize_Callback       (GLFWwindow *HAND,int w,int h)
 {
 #if _CALLBACK_DEBUG
     Print("Resize callback W: "<< w <<" H: " << h);
 #endif
-        SCREEN->HEIGHT = h;
-        SCREEN->WIDTH  = w;
-        SCREEN->MOUSE.Offset.x = (float)SCREEN->WIDTH / SCREENWIDTH;
-        SCREEN->MOUSE.Offset.y = (float)SCREEN->HEIGHT/ SCREENHEIGHT;
+    SCREEN->Size = Vec2(w, h);
+	SCREEN->Mouse.Offset = SCREEN->Size / Vec2(SCREENWIDTH, SCREENHEIGHT);
+    glViewport(0, 0, w, h);
+}
 
-    _GL(glViewport(0,0, w,h));
-}
-void Window::Window_close_callback (GLFWwindow* window)
+  void Window::Window_close_callback (GLFWwindow* window)
 {
-        if (glfwWindowShouldClose(SCREEN->glCONTEXT))
-            glfwSetWindowShouldClose(window, GL_TRUE);
+	if (glfwWindowShouldClose(SCREEN->glCONTEXT))
+	{
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	}
 }
-void Window::KeyBoard_Callback     (GLFWwindow *window, int key, int scancode, int action, int mods) 
-{ 
-//f_TRACE(Print("Keyboard Callback"));
-//   GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT.       
+  void Window::KeyBoard_Callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
 #if _CALLBACK_DEBUG
-    Print("Keyboard Callback");
+	Print("Keyboard Callback");
 #endif
-        SCREEN->Keyboard.Key = key;
-        SCREEN->Keyboard.Action = action;
-        SCREEN->Keyboard.Scancode = scancode;  
-        SCREEN->Keyboard.Modifications = mods;
-        SCREEN->Keyboard.KEY_STATES[key] = glfwGetKey(SCREEN->glCONTEXT,key);	       
+	SCREEN->Keyboard.Key = key;
+	SCREEN->Keyboard.Action = action;
+	SCREEN->Keyboard.Scancode = scancode;
+	SCREEN->Keyboard.Modifications = mods;
+	SCREEN->Keyboard.KEY_STATES[key] = glfwGetKey(SCREEN->glCONTEXT, key);
 }
-void Window::Mouse_Callback        (GLFWwindow *window, int button, int action, int mod)
+  void Window::Mouse_Callback (GLFWwindow *window, int button, int action, int mod)
 {
 #if _CALLBACK_DEBUG
     Print("Mouse Callback");
 #endif
-// TODO: ADD THESE MIDDLE MOUSE AND WHEEL CALLBACKS
-// void (*CallBackOnMButtonDown)          (int mX, int mY);  
-// void (*CallBackOnMButtonUp   )         (int mX, int mY);
-    
-    SCREEN->MOUSE.Action = action;
-    SCREEN->MOUSE.Button[button] = action != GLFW_RELEASE;
-
-    if(action == GLFW_PRESS)
-    {
-        if(button == MOUSE_LEFT)
-        {
-            if(SCREEN->Callbacks.CallBackOnLButtonDown != nullptr)
-            {
-                SCREEN->Callbacks.CallBackOnLButtonDown(SCREEN->MOUSE.X, SCREEN->MOUSE.Y);
-            }
-        }
-        if(button == MOUSE_RIGHT)
-        {
-            if(SCREEN->Callbacks.CallBackOnRButtonDown != nullptr)
-            {
-                SCREEN->Callbacks.CallBackOnRButtonDown(SCREEN->MOUSE.X, SCREEN->MOUSE.Y);
-            }
-        }
-    }
-    else
-    {
-        if(action == GLFW_RELEASE)
-        {
-            if(button == MOUSE_LEFT)
-            {
-                if(SCREEN->Callbacks.CallBackOnLButtonUp != nullptr)
-                {
-                    SCREEN->Callbacks.CallBackOnLButtonUp(SCREEN->MOUSE.X, SCREEN->MOUSE.Y);
-                }
-            }
-            if(button == MOUSE_RIGHT)
-            {
-                if(SCREEN->Callbacks.CallBackOnRButtonUp != nullptr)
-                {
-                    SCREEN->Callbacks.CallBackOnRButtonUp(SCREEN->MOUSE.X, SCREEN->MOUSE.Y);
-                }
-            }
-        }
-    }
+	SCREEN->Mouse.Action = action;
+	switch (action)
+	{
+	case GLFW_PRESS:
+		switch (button)
+		{
+		case MOUSE_LEFT:
+			SCREEN->Mouse.Button.Left = true;
+			if (SCREEN->Callbacks.CallBackOnLButtonDown != NULL)
+			{
+				SCREEN->Callbacks.CallBackOnLButtonDown(SCREEN->Mouse.Position.x, SCREEN->Mouse.Position.y);
+			}
+			break;
+		case MOUSE_RIGHT:
+			SCREEN->Mouse.Button.Right = true;
+			if (SCREEN->Callbacks.CallBackOnRButtonDown != NULL)
+			{
+				SCREEN->Callbacks.CallBackOnRButtonDown(SCREEN->Mouse.Position.x, SCREEN->Mouse.Position.y);
+			}
+			break;
+		case MOUSE_CENTER:
+			SCREEN->Mouse.Button.Center = true;
+			if (SCREEN->Callbacks.CallBackOnMButtonDown != NULL)
+			{
+				SCREEN->Callbacks.CallBackOnMButtonDown(SCREEN->Mouse.Position.x, SCREEN->Mouse.Position.y);
+			}
+			break;
+		case GLFW_MOUSE_BUTTON_4:
+			Print("Add Mouse Support for Button 4");
+			break;
+		case GLFW_MOUSE_BUTTON_5:
+			Print("Add Mouse Support for Button 5");
+			break;
+		case GLFW_MOUSE_BUTTON_6:
+			Print("Add Mouse Support for Button 6");
+			break;
+		case GLFW_MOUSE_BUTTON_7:
+			Print("Add Mouse Support for Button 7");
+			break;
+		case GLFW_MOUSE_BUTTON_8:
+			Print("Add Mouse Support for Button 8");
+			break;
+		}
+		break;
+	case GLFW_RELEASE:
+		switch (button)
+		{
+		case MOUSE_LEFT:
+			SCREEN->Mouse.Button.Left = false;
+			if (SCREEN->Callbacks.CallBackOnLButtonUp != NULL)
+			{
+				SCREEN->Callbacks.CallBackOnLButtonUp(SCREEN->Mouse.Position.x, SCREEN->Mouse.Position.y);
+			}
+			break;
+		case MOUSE_RIGHT:
+			SCREEN->Mouse.Button.Right = false;
+			if (SCREEN->Callbacks.CallBackOnRButtonUp != NULL)
+			{
+				SCREEN->Callbacks.CallBackOnRButtonUp(SCREEN->Mouse.Position.x, SCREEN->Mouse.Position.y);
+			}
+			break;
+		case MOUSE_CENTER:
+			SCREEN->Mouse.Button.Center = false;
+			if (SCREEN->Callbacks.CallBackOnMButtonUp != NULL)
+			{
+				SCREEN->Callbacks.CallBackOnMButtonUp(SCREEN->Mouse.Position.x, SCREEN->Mouse.Position.y);
+			}
+			break;
+		case GLFW_MOUSE_BUTTON_4:
+			Print("Add Mouse Support for Button 4");
+			break;
+		case GLFW_MOUSE_BUTTON_5:
+			Print("Add Mouse Support for Button 5");
+			break;
+		case GLFW_MOUSE_BUTTON_6:
+			Print("Add Mouse Support for Button 6");
+			break;
+		case GLFW_MOUSE_BUTTON_7:
+			Print("Add Mouse Support for Button 7");
+			break;
+		case GLFW_MOUSE_BUTTON_8:
+			Print("Add Mouse Support for Button 8");
+			break;
+		}
+ 	}
 }
-void Window::DropFile_callback     (GLFWwindow *window, int count, const char** paths)
+void Window::DropFile_callback(GLFWwindow *window, int count, const char** paths)
 {
-        for (int i = 0;  i < count;  i++){
-                Print("File the DropFILE callback to handle File:");  //handle_dropped_file(paths[i]);
-                Print(*paths);}                                        
+	for (int i = 0; i < count; i++)
+	{
+		Print("File the DropFILE callback to handle File:");  //handle_dropped_file(paths[i]);
+		Print(*paths);
+	}
 }
-void Window::MouseMove_Callback    (GLFWwindow *window, double xpos, double ypos)
+void Window::MouseMove_Callback(GLFWwindow *window, double xpos, double ypos)
 {
-  //    Print(     SCREEN->MOUSE.MouseMoveX);
-        SCREEN->MOUSE.MouseMoveX = SCREEN->MOUSE.X - xpos;
-        SCREEN->MOUSE.MouseMoveY = SCREEN->MOUSE.Y - ypos;
-        SCREEN->MOUSE.X = xpos /  (SCREEN->MOUSE.Offset.x),
-        SCREEN->MOUSE.Y = ypos /  (SCREEN->MOUSE.Offset.y);
+	SCREEN->Mouse.Velocity = SCREEN->Mouse.Position - Vec2(xpos, ypos);
+	SCREEN->Mouse.RealPosition = Vec2(xpos, ypos);
+	SCREEN->Mouse.Position = SCREEN->Mouse.RealPosition / (SCREEN->Mouse.Offset);
 
-
+	if (SCREEN->Callbacks.CallBackOnMouseMove != NULL)
+	{
+		SCREEN->Callbacks.CallBackOnMouseMove
+		(
+			xpos, ypos,
+			SCREEN->Mouse.Velocity.x,	SCREEN->Mouse.Velocity.y,
+			SCREEN->Mouse.Button.Left, SCREEN->Mouse.Button.Right, SCREEN->Mouse.Button.Center
+		);
+	}
 }
-void Window::Window_Size_Callback  (GLFWwindow *window, int x, int y)
+void Window::Window_Move_Callback  (GLFWwindow *window, int x, int y)
 {
 #if _CALLBACK_DEBUG
-f_TRACE("WINDOW Move CALLBACK X:" << x << " Y: " << y); // This is a Window Move Callback. I got Wires crossed somewhere. Look into this when it matters... 
-                                 // ~*OLD COMMENT *~ I AM CURRENTLY NOT SURE HOW EXACTLY THIS DIFFERS FROM THE RESIZE CALL BACK
+    f_TRACE("WINDOW Move CALLBACK X:" << x << " Y: " << y); // This is a Window Move Callback. I got Wires crossed somewhere. Look into this when it matters... 
 #endif
-        SCREEN->X = x; // Double check to ensure this is the height and width and not position THIS SHOULD BE THE WINDOW MOVE CALLBACK WTF
-        SCREEN->Y = y;
+        SCREEN->Position.x = x; // Double check to ensure this is the height and width and not position THIS SHOULD BE THE WINDOW MOVE CALLBACK WTF
+        SCREEN->Position.y = y;
 }
 	
 /*____________________________________________________________________________________________________________________________________________________________________*/
@@ -251,110 +290,113 @@ f_TRACE("WINDOW Move CALLBACK X:" << x << " Y: " << y); // This is a Window Move
 
 void Window::SetSyncRate(unsigned short rate)
 {
-        SyncRATE = 1000 / rate;
+	Framerate.Set(rate);//SyncRATE = 1000 / rate;
 }
 unsigned short Window::GetSyncRate()
 {
-        return SyncRATE;
+	return Framerate.Get();
 }
 
 /*================================================== Free the memory Allocated for the Window ========================================================================*/
 void Window::Destroy()
 {
-        glfwDestroyWindow(glCONTEXT);
+	glfwDestroyWindow(glCONTEXT);
 }
 
 /*================================================== Return the current Window position as a Vec2 ====================================================================*/
 
-void Window::SetPosition (GLFWwindow *,int x, int y)
+void Window::SetPosition(GLFWwindow *, int x, int y)
 {
-    glfwSetWindowPos(SCREEN->glCONTEXT, x, y);
+	glfwSetWindowPos(SCREEN->glCONTEXT, x, y);
 }
 Vec2 Window::GetPosition()
-{ 
-        int X,Y;
-        glfwGetWindowPos(SCREEN->glCONTEXT,&X,&Y);
-        return Vec2((int)X,(int)Y);
+{
+	int X, Y;
+	glfwGetWindowPos(SCREEN->glCONTEXT, &X, &Y);
+	return Vec2((int)X, (int)Y);
 }
 
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                    /* EXTERNAL API to MANAGE WINDOW CLASS*/                                                                        //
+//                                         /* GLFW CALLBACKS SET WINDOW CLASS STATE FOR ACTIVE WINDOW */                                                              //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-//======================================================================================================================================================================
-//__________________________________________________________ Set Window To be API Target _______________________________________________________________________________
 
 //======================================================================================================================================================================
 //__________________________________________________________ Swap front and back buffers _______________________________________________________________________________
 void Window::Sync()
 {
-      switch (SCREEN->Keyboard.Action)
+    switch (SCREEN->Keyboard.Action)
     {
     case(GLFW_PRESS):
 
-            if(SCREEN->Callbacks.CallBackOnKeyDown != nullptr)
-            {
-                SCREEN->Callbacks.CallBackOnKeyDown(SCREEN->Keyboard.Key,  
-                                                    SCREEN->Keyboard.Scancode, 
-                                                    SCREEN->Keyboard.Modifications , NULL); // Check this Null its suppose to be a Repeat checker
-            }
+		if (SCREEN->Callbacks.CallBackOnKeyDown != nullptr)
+		{
+			SCREEN->Callbacks.CallBackOnKeyDown(SCREEN->Keyboard.Key,
+				SCREEN->Keyboard.Scancode,
+				SCREEN->Keyboard.Modifications, NULL); // Check this Null its suppose to be a Repeat checker
+
+		}
         break;
     
     case(GLFW_REPEAT):
+		if (SCREEN->Callbacks.CallBackOnKeyDown != nullptr)
+		{
+			SCREEN->Callbacks.CallBackOnKeyDown(SCREEN->Keyboard.Key, SCREEN->Keyboard.Scancode, SCREEN->Keyboard.Modifications, true); // Check this Null its suppose to be a Repeat checker
+		}
+		//     if(SCREEN->Callbacks.CallBackOnKeyHold != nullptr)   TODO: THIS IS PISSING ME OFF, I DISLIKE GLFW FOR TAKING CONTROL OF MY MESSAGE LOOP
+		//     {
+		//         SCREEN->Callbacks.CallBackOnKeyHold(SCREEN->Keyboard.Key, SCREEN->Keyboard.Scancode, SCREEN->Keyboard.Modifications); // Check this Null its suppose to be a Repeat checker
+		//     }
+		break;
 
-            if(SCREEN->Callbacks.CallBackOnKeyHold != nullptr)
-            {
-                SCREEN->Callbacks.CallBackOnKeyHold(SCREEN->Keyboard.Key,  
-                                                    SCREEN->Keyboard.Scancode, 
-                                                    SCREEN->Keyboard.Modifications); // Check this Null its suppose to be a Repeat checker
-            }
-        break;
-       
-    case(GLFW_RELEASE):  
-            SCREEN->Keyboard.Key = 0; 
-            if(SCREEN->Callbacks.CallBackOnKeyUp != nullptr)
-            {
-                SCREEN->Callbacks.CallBackOnKeyUp(SCREEN->Keyboard.Key,  
-                                                  SCREEN->Keyboard.Scancode, 
-                                                  SCREEN->Keyboard.Modifications);
-            }
-        break;
-    }
+	case(GLFW_RELEASE):
+		SCREEN->Keyboard.Key = 0;
+		if (SCREEN->Callbacks.CallBackOnKeyUp != nullptr)
+		{
+			SCREEN->Callbacks.CallBackOnKeyUp(SCREEN->Keyboard.Key, SCREEN->Keyboard.Scancode, SCREEN->Keyboard.Modifications);
+		}
+		break;
+	}
 
+	/*~~~~~~~~~~~~~~~~~~Get Frames Per Second~~~~~~~~~~~~~~~~~~~~*/
 
-//if (SCREEN->Callbacks.CallBackOnMouseMove != nullptr)SCREEN->Callbacks.CallBackOnMouseMove(SCREEN->MOUSE.X, SCREEN->MOUSE.Y, 0, 0, SCREEN->MOUSE.Button[0], SCREEN->MOUSE.Button[1],SCREEN->MOUSE.Button[2]);
+	Framerate.CurrentTime = GetTicks();
+	float DeltaTime = Framerate.CurrentTime - Framerate.PreviousTime;
+	Framerate.PreviousTime = Framerate.CurrentTime;
 
-/*~~~~~~~~~~~~~~~~~~Get Frames Per Second~~~~~~~~~~~~~~~~~~~~*/
-             //CPU "ticks" since the program started.
-    //clock_t programTickCount = std::clock();
- 
-    //Convert from ticks to seconds.
-           float time = (float)std::clock();//float(programTickCount) / CLOCKS_PER_SEC;
-        ///  Print( std::clock());
-           if(time - SCREEN->TIMER >= 1000)
-           {
-                       SCREEN->FPS = SCREEN->FRAME_COUNT;
-                       SCREEN->FRAME_COUNT = 0;
-                      SCREEN->TIMER  = time;//glfwGetTime();
-           }
-           SCREEN->FRAME_COUNT++;
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/		
-  //          glfwPollEvents();
-          //  int W,H;
-         //   _GL(glfwGetFramebufferSize(SCREEN->glCONTEXT,&W,&H)); //<---------- The pollevents here and in the GameLoop function should be reviewed because even though its working I dont believe its being done correctly;
-          glfwSwapBuffers(SCREEN->glCONTEXT);
+	if (Framerate.CurrentTime - Framerate.Tracker >= 1000)
+	{
+		Framerate.Rate = Framerate.Counter;
+		Framerate.Tracker = Framerate.CurrentTime;
+		Framerate.Counter = 0;
+	}
+	if ((Framerate.CurrentTime - Framerate.LastFrame) >= Framerate.Coefficient)
+	{
+		Framerate.LastFrame = Framerate.CurrentTime;
+		Framerate.Counter++;
+
+		Update();
+		Render();
+		glfwSwapBuffers(SCREEN->glCONTEXT);
+	}
+	else
+	{
+		// Required Time for Framerate not meet yet do some other Update.
+	}
+         
 
 }
 
 //======================================================================================================================================================================
 //____________________________________________________________  Clear the back buffers  ________________________________________________________________________________
+void Window::SetClearColor(int r, int g, int b)
+{
+	glClearColor(GL_Color(r), GL_Color(g), GL_Color(b), 1);
+}
 void Window::CLS()
 {
-    glClearColor(0,0,GL_Color(255),1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 void Window::CLS(unsigned long color)
@@ -365,7 +407,11 @@ void Window::CLS(unsigned long color)
         glClearColor(R,G,B,1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
-
+void Window::CLS(int r, int g, int b)
+{
+	_GL(glClearColor(GL_Color(r), GL_Color(g), GL_Color(b), 1));
+	_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
 //======================================================================================================================================================================
 //______________________________________________________  EVENT HANDLER AND MESSAGE DISPATCHER  ________________________________________________________________________
 bool Window::EventLoop()
@@ -383,7 +429,7 @@ bool Window::EventLoop()
             
 //======================================================================================================================================================================
 //__________________________________________________________ CLIPBOARD GETTERS AND SETTERS _____________________________________________________________________________
-const char *GetClipBoard()  /*clipboard Getter*/          
+const char *Window::GetClipBoard()  /*clipboard Getter*/          
 {       
     Print("TEST GET CLIPBOARD FUNCTION");
     const char* text = glfwGetClipboardString(Window::SCREEN->glCONTEXT);
@@ -396,49 +442,12 @@ const char *GetClipBoard()  /*clipboard Getter*/
     return NULL;
     }
 } 
-void  SetClipBoard(char *text)  /*clipboard setter*/
+void  Window::SetClipBoard(char *text)  /*clipboard setter*/
 { 
     Print("TEST SET CLIPBOARD FUNCTION");
     glfwSetClipboardString(Window::SCREEN->glCONTEXT,text);
 }
 
-//======================================================================================================================================================================
-//__________________________________________________________ Get Buffer Offser Pointer _________________________________________________________________________________
-inline GLvoid* BufferObjectPtr( unsigned int idx )
-{
-    return (GLvoid*)( ((char*)NULL) + idx );
-// http://ptgmedia.pearsoncmg.com/images/chap2_0321336798/elementLinks/02fig03.gif // Date of link: 1/ 27/ 2018
-
-}
-
-//=================================================================================================================================================================== */
-//____________________________________________________ Error Logger for Printing OpenGL Errors _________________________________________________________________________
-
-bool GLLogCall(const char *function, const char *file, int line){
-        GLenum error = glGetError();
-        if(error != 0){
-            printf("[OpenGL ERROR]: %s\n",glewGetErrorString(error));
-            std::cout << "Error Number: " <<  error << std::endl;
-            std::cout << "FILE: " << file << std::endl;
-            std::cout << "LINE NUMBER: " << line << std::endl;
-            std::cout << "FUNCTION: " << function << std::endl;
-
-            system("PAUSE");
-            return false;
-        }
-  return true;
-}
-void GLCheckError(){
-   GLenum err;
-   while((err = glGetError()) != GL_NO_ERROR)
-   {
-     std::cout<< "GLCHECKERROR" << err ;
-   }
-
-}
-void GLClearError(){
-//     while((glGetError()) != GL_NO_ERROR);
-}
 
 //=================================================================================================================================================================== */
 //_____________________________________________________________________________________________________________________________________________________________________
@@ -448,6 +457,85 @@ float WrapAngle(float angle){
     while(angle > 360) angle -= 360;
     return angle;
 }
+
+
+
+
+float GetTicks()
+{
+	return glfwGetTime() * 1000;
+}
+#endif
+
+
+
+
+
+
+
+
+
+//
+//       void SetOrthographic(int width, int height);
+
+//void Window::SetOrthographic(int width, int height)
+//{
+//	Size = Vec2(width, height);
+//	glMatrixMode(GL_PROJECTION);
+//	glLoadIdentity();
+//	glOrtho(0.0f, Size.x, Size.y, 0.0f, 0.0f, 1000.0f);
+//}
+//
+//if (SCREEN->Callbacks.CallBackOnMouseMove != nullptr)SCREEN->Callbacks.CallBackOnMouseMove(SCREEN->MOUSE.X, SCREEN->MOUSE.Y, 0, 0, SCREEN->MOUSE.Button[0], SCREEN->MOUSE.Button[1],SCREEN->MOUSE.Button[2]);
+
+
+//// SCREEN RAYCASTER TO GET THE MOUSE XY Position in 3D SPACE
+//    http://antongerdelan.net/opengl/raycasting.html
+
+////In a header somewhere.
+
+//PFNGLUSEPROGRAMPROC glUseProgram;
+//
+////In an initialization routine
+//glUseProgram = (PFNGLUSEPROGRAMPROC)wglGetProcAddress("glUseProgram");
+
+
+//PFNGLUSEPROGRAMPROC EXT_compiled_vertex_array;
+//GL_ARB_vertex_buffer_object();
+//    multi draw arrays
+// ARB   pixel buffer object
+//  ARB  draw buffers
+//  GL EXT draw range elements
+//
+//  glBindBufferARB();
+
+//#define GL_ARRAY_BUFFER_ARB 0x8892
+//#define GL_STATIC_DRAW_ARB 0x88E4
+//typedef void (APIENTRY * PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
+//typedef void (APIENTRY * PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint *buffers);
+//typedef void (APIENTRY * PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint *buffers);
+//typedef void (APIENTRY * PFNGLBUFFERDATAARBPROC) (GLenum target, int size, const GLvoid *data, GLenum usage);
+// 
+//// VBO Extension Function Pointers
+//PFNGLGENBUFFERSARBPROC glGenBuffersARB = NULL;                  // VBO Name Generation Procedure
+//PFNGLBINDBUFFERARBPROC glBindBufferARB = NULL;                  // VBO Bind Procedure
+//PFNGLBUFFERDATAARBPROC glBufferDataARB = NULL;                  // VBO Data Loading Procedure
+//PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB = NULL;                // VBO Deletion Procedure
+
+
+
+
+//======================================================================================================================================================================
+//__________________________________________________________ Get Buffer Offser Pointer _________________________________________________________________________________
+// inline GLvoid* BufferObjectPtr(unsigned int idx)
+// {
+// 	return (GLvoid*)(((char*)NULL) + idx);
+// 	// http://ptgmedia.pearsoncmg.com/images/chap2_0321336798/elementLinks/02fig03.gif // Date of link: 1/ 27/ 2018
+// 
+// }
+// 
+//extern GLvoid* BufferObjectPtr(unsigned int idx);
+
 
 //=================================================================================================================================================================== */
 //_____________________________________________________________________________________________________________________________________________________________________
@@ -500,39 +588,16 @@ float WrapAngle(float angle){
 //
 //
 
+//CPU "ticks" since the program started.
+//clock_t programTickCount = std::clock();
 
-float Min(float p1, float p2)
-{
-    if(p1 > p2)
-    { 
-        return p2;
-    }
-    else
-    { 
-        return p1;
-    }
-}
-float Max(float p1, float p2)
-{
-    if(p1 > p2)
-    { 
-        return p1;
-    }
-    else
-    { 
-        return p2;
-    }
-}
-float Squared(float x)
-{
-    return x * x;
-}
-float GetDistance(Vec3 p1, Vec3 p2)
-{
-    return sqrt(Squared(p1.x - p2.x) + 
-                Squared(p1.y - p2.y) + 
-                Squared(p1.z - p2.x));
-}
-
-
-#endif
+//Convert from ticks to seconds.
+//          float time = (float)std::clock();//float(programTickCount) / CLOCKS_PER_SEC;
+//		   if (time - SCREEN->TIMER >= 1000)
+//		   {
+//			   SCREEN->FPS = SCREEN->FRAME_COUNT;
+//			   SCREEN->FRAME_COUNT = 0;
+//			   SCREEN->TIMER = time;//glfwGetTime();
+//			   SCREEN->Framerate.Rate = SCREEN->FPS;
+//		   }
+//		   SCREEN->FRAME_COUNT++;

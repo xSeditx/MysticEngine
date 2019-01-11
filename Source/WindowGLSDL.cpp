@@ -123,7 +123,7 @@ Window::Window(int x, int y, int width, int height, const char * title)
 
 }
 
-int Window::EventLoop()
+  int Window::EventLoop()
 {
 	SDL_Event Event;
 	while (SDL_PollEvent(&Event))
@@ -140,7 +140,7 @@ int Window::EventLoop()
 		return TRUE;
 	}
 }
-void Window::MessageHandler(SDL_Event msg)
+  void Window::MessageHandler(SDL_Event msg)
 {
 	int MX = 0,
 		MY = 0;
@@ -383,17 +383,17 @@ return;
 	}
 }
 
-void Window::CLS()
+  void Window::CLS()
 {
 	_GL(glClearColor(0, 0, GL_Color(200), 1));
 	_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
-void Window::CLS(int r, int g, int b)
+  void Window::CLS(int r, int g, int b)
 {
 	_GL(glClearColor(GL_Color(r), GL_Color(g), GL_Color(b), 1));
 	_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
-void Window::Sync()
+  void Window::Sync()
 {
 	// This whole Fucking System is messed up
 	Framerate.CurrentTime = SDL_GetTicks();
@@ -423,5 +423,8 @@ void Window::Sync()
 	}
 }
  
-
+float GetTicks()
+{
+	return SDL_GetTicks();
+}
 #endif

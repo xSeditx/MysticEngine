@@ -76,7 +76,7 @@ void Update() override;
 #include"Window.h"
 #include"Renderer.h"
 #include"Material.h"
-#include"Object.h"
+//#include"Object.h"
 
 
 class Mesh : public GameObject

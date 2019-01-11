@@ -490,9 +490,9 @@ Cube::Cube(Vec3 pos, float size)
 
 	VAO = new VertexArrayObject();
 	VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&VertexList[0], 24));
-//	VAO->Attach(BufferTypes::UVCOORD, new VertexBufferObject<Vec2>(&TextureCoords[0], 24));
-//	VAO->Attach(BufferTypes::NORMAL, new  VertexBufferObject<Vec3>(&NormalList[0], 24));
-//	VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec4>(&Cols[0], 24));
+ 	VAO->Attach(BufferTypes::UVCOORD, new VertexBufferObject<Vec2>(&TextureCoords[0], 24));
+ 	VAO->Attach(BufferTypes::NORMAL, new  VertexBufferObject<Vec3>(&NormalList[0], 24));
+ 	VAO->Attach(BufferTypes::COLOR, new VertexBufferObject<Vec4>(&Cols[0], 24));
 	VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&IndexList[0], 36));
 
 
@@ -806,7 +806,7 @@ Torus::Torus(Vec3 position, int numc, int numt,  float scale)
 
 
 
-void Torus::Render()
+  void Torus::Render()
 {
 	Bind();
 //	glDrawElements(GL_QUAD_STRIP, Polygons->ElementCount(), GL_UNSIGNED_INT, nullptr);

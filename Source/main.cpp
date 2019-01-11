@@ -1,5 +1,5 @@
 
-//#define __TEST_2D
+#define __TEST_2D
 #define __TEST_3D
 //#define __ECHO
 //#define __TEST_PARTICLES
@@ -17,25 +17,19 @@
  
 // https://stackoverflow.com/questions/28287162/why-is-a-simple-shader-slower-than-the-standard-pipeline
 
-void Update()
+  void Update()
 {
 }
-void Render()
+  void Render()
 {
 }
-class MyApp : public Application
+  void Keydown(Uint16 Keycode, Uint16 ScanCode, Uint16 Modifier, Uint8 rep)
 {
-	void Update()
-	{
+	// GLFW Right arrow 263 Scan 331
+	// SDL Right arrow  80 scan 80
 
-	}
-	void Render()
-	{
-
-	}
-};
-void Keydown(Uint16 Keycode, Uint16 ScanCode, Uint16 Modifier, Uint8 rep)
-{
+	//GLFW  forward 265 0b100001001 328     0b101001000
+	// SDL    82 0b1010010 82 0b100001001
 	switch (Keycode)
 	{
 	case 79:
@@ -44,19 +38,19 @@ void Keydown(Uint16 Keycode, Uint16 ScanCode, Uint16 Modifier, Uint8 rep)
 	case 80:
 		Window::SCREEN->World->Camera.MoveLeft(.51);
 		break;
-	case 81:
+	case MYSTIC_KEY_UP:
 		Window::SCREEN->World->Camera.MoveForward(.51);
 		break;
-	case 82:
+	case MYSTIC_KEY_DOWN:
 		Window::SCREEN->World->Camera.MoveBack(.51);
 		break;
 	}
 }
-void MouseMove(int mX, int mY, int relX, int relY, bool Left, bool Right, bool Middle)
+  void MouseMove(int mX, int mY, int relX, int relY, bool Left, bool Right, bool Middle)
 {
 	Window::SCREEN->World->Camera.Rotate(-relX, relY);
 }
-void LoadStuff()
+  void LoadStuff()
 {
 	//	Moon Material: ???  Is this a thing???
 	Image::Manager.Add(new Image("Moon", "Resources//Moon.bmp"));
@@ -90,9 +84,22 @@ void LoadStuff()
 
 }
 
+class MyApp : public Application
+{// REALLY NEEDS WORK AS THE ENTIRE API IS GOING TO FOCUS AROUND MAKING A MYSTICAL APPLICATION 
+	// FOR NOW THE SCENE IS MANAGED IN THE WINDOW CLASS
+	void Update()
+	{
+
+	}
+	void Render()
+	{
+
+	}
+};
+
 // REMINDER:: MUST LOAD UP AN ACTIVE SHADER PRIOR TO ATTEMPTS AT LOADING SPRITES OR ANY OTHER MESH
 //            ELSE A STRANGE std::My_pair ERROR WILL BE TRIGGERED BECAUSE OF ATTEMPTS AT SETTING 
-//            THE ATTRIBUTE LOCATIONS
+//            THE ATTRIBUTE LOCATIONS..............................................................
 
 void main()
 {
@@ -113,8 +120,6 @@ void main()
 
 	Viewport::Camera = &MainWin.World->Camera;
 
- //	GMesh GTest;
- //	GTest.MakeCube(Vec3(0, 0, 0), 5);
 #ifdef __TEST_3D
 	{ // CREATION OF THE FIRST OBJECT TO DISPLAY THE LIGHT
 		Sphere *center = new Sphere(Vec3(0, 0, 0), 1, 25);
@@ -132,7 +137,7 @@ void main()
 			//MainWin.World->Groups[0].Add(GTest, BrickMaterial());
  
  		 	Block *b = new Block(pos, 2);
-			MainWin.World->Groups[0].Add(b, BrickMaterial()); //; Sphere(pos, 1, 30)
+		 	MainWin.World->Groups[0].Add(b, BrickMaterial()); //; Sphere(pos, 1, 30)
 		}
 	}
 #endif
@@ -154,9 +159,9 @@ void main()
 #endif
 
 #ifdef __TEST_MESH
-	//Mesh *DragonObject = new Mesh();
-	//DragonObject->LoadOBJ("Resources\\dragon.obj");
-	//MainWin.World->Groups[0].Add(DragonObject, BrickMaterial());
+	 Mesh *DragonObject = new Mesh();
+	// DragonObject->LoadOBJ("Resources\\dragon.obj");
+	// MainWin.World->Groups[0].Add(DragonObject, BrickMaterial());
 #endif
 
 
@@ -164,11 +169,12 @@ void main()
 		Xangle = 0,
 		Yangle = 0;
 
+	MainWin.SetClearColor(25, 0, 0);
 	while (MainWin.EventLoop())
 	{
 		{
 			BenchMark Performance;
-			MainWin.CLS(0, 100, 0);
+			MainWin.CLS();
 
 			MainWin.World->Render();
 			MainWin.World->Lights[0].Set_Position

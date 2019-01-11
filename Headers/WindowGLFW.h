@@ -74,9 +74,9 @@ class  Window;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // 
 
-#include "glm.hpp"
-#include <gtc/type_ptr.hpp>
-#include "gtc/matrix_transform.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 
 typedef glm::vec2 Vec2;
@@ -94,6 +94,11 @@ typedef glm::uint16 Uint16;
 typedef glm::uint32 Uint32;
 typedef glm::uint64 Uint64;
 
+
+typedef glm::ivec2 Vec2i;
+typedef glm::ivec3 Vec3i;
+typedef glm::ivec4 Vec4i;
+
 class Scene; class Viewport;
 class Application
 {
@@ -109,7 +114,14 @@ public:
 	Viewport *Camera;
 };
 
-
+enum MouseButtons
+{
+	LEFT,
+	RIGHT,
+	CENTER,
+	X1,
+	X2
+};
 
 
 
@@ -207,146 +219,6 @@ class CallBack
 };
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                    WINDOWS CAMERA CLASS                                                                                                                            
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-class Cam
-{
-public:
-    Cam(){}
-#if 1
-    Cam(Vec3 position, Vec3 Rotation)
-    { 
-            FOV = 45.0;
-            AspectRatio = 640.0f / 480.0f;
-            Near = 0.1f;
-            Far  = 10000.0f;
-
-            Speed = 2.0;
-
-            Position = position;
-
-            horizontalAngle=0;
-            verticalAngle=0;
-
-            Forward =  Vec3(0.0f, 0.0f, 1.0f);
-            Up      =  Vec3(0.0f, 1.0f, 0.0f);
-            
-            ProjectionMatrix  = glm::perspective((FOV),  AspectRatio, Near, Far);
-            View = GetViewProjection();
-    }
-
-    float    FOV, 
-             AspectRatio, 
-             Near,
-             Far;
-             
-    Vec3     Position,
-             Rotation,
-             Forward,
-             Right,
-             Up;
-             
-    Matrix   ProjectionMatrix;
-    Matrix   View;
-
-    float horizontalAngle,
-          verticalAngle;
-
-
-    float Speed;
-//    std::vector<Matrix> MatrixStack;
-//=======================================================================================================================================================
-// FUNCTIONS FOR THE CAMERA CLASS
-//=======================================================================================================================================================
-
-    void Update()
-    {
-           // ClampCamera();
-           Forward = Vec3(cos(verticalAngle) * sin(horizontalAngle),
-	                    sin(verticalAngle),
-		                cos(verticalAngle) * cos(horizontalAngle));
-
-	       Right = Vec3(sin(horizontalAngle - 3.14f / 2.0f),
-	                    0,
-	                    cos(horizontalAngle - 3.14f / 2.0f));
- 
-           Up    = glm::normalize(glm::cross(Right, Forward));
-    }
- // Direction : Spherical coordinates to Cartesian coordinates conversion
-//glm::vec3 direction(
-//    cos(verticalAngle) * sin(horizontalAngle),
-//    sin(verticalAngle),
-//    cos(verticalAngle) * cos(horizontalAngle)
-//);
-//   
-
-    Matrix GetViewProjection()
-    {
-        View = glm::lookAt(Position, Position + Forward, Up);
-        return ProjectionMatrix;
-    }
-        
-    void Rotate(float pitch, float yaw)
-    {
-        Rotation.y += yaw;
-        Rotation.x += pitch;
-
-        horizontalAngle += .05 * pitch;
-	    verticalAngle   += .05 * yaw;
-    }
-    void MoveForward(float speed)
-    { 
-            Position -= (Speed * Forward);
-            View = glm::translate(glm::mat4(1.0f), Position);
-    }
-    void MoveBack(float speed)
-    {
-            Position += (Speed * Forward);
-            View = glm::translate(glm::mat4(1.0f), Position);
-    }
-    void  MoveLeft(float speed)
-    {
-            Position -= Right * Speed; // glm::normalize(glm::cross(Forward,Up)) * Speed;
-            View = glm::translate(glm::mat4(1.0f), Position);
-    }
-    void  MoveRight(float speed)
-    {
-            Position += Right * Speed; //Position += glm::normalize(glm::cross(Forward,Up)) * Speed;
-            View = glm::translate(glm::mat4(1.0f), Position);
-    }
-//=======================================================================================================================================================
-
-    void ClampCamera()
-    {
-      if ( Rotation.x > 90)  Rotation.x =  90;
-      if ( Rotation.x < -90) Rotation.x = -90;
-      if ( Rotation.y < .0)    Rotation.y  += 360.0f;
-      if ( Rotation.y > 360.0f)  Rotation.y  -= 360.0f;
-    }
-
-    Matrix RotateX(GLfloat Angle)
-    {
-        Matrix ret;
-            
-        return ret;
-    }
-    Matrix RotateY(GLfloat Angle)
-    {
-        Matrix ret;
-            
-        return ret;
-    }
-    Matrix RotateZ(GLfloat Angle)
-    {
-        Matrix ret;
-            
-        return ret;
-    }
-#endif
-
-};
 
 
 
@@ -363,10 +235,10 @@ public:
         ~Window(){glfwTerminate();}
         Window(int,int,int,int,char*);
 	    
-        int     X,     Y,
-            WIDTH,HEIGHT;
-
-        char           *TITLE;
+ 
+		Vec2 Position;
+		Vec2 Size;
+        char           *Title;
         GLFWwindow     *glCONTEXT;   
         
         unsigned  long  TIMER;
@@ -375,30 +247,48 @@ public:
 
         struct FrameBuffer
         {
-            int WIDTH,
-                HEIGHT;
-           GLuint NAME;
-        }FRAME_BUFFER;
+			Vec2 Size;
+           GLuint ID;
+        }FrameBuffer;
         
         struct MouseProperties
         {
-            bool Button[5];      
-            int  Action,
-                 Modifications;
-            double  X,
-                    Y;
-            int  OldX,Oldy;
-            int  MouseMoveX, 
-                 MouseMoveY;
-            Vec2 Offset;
-            inline bool IsButtonPressed (int button){ return Button[button]; }
-            inline void HIDE(){glfwSetInputMode(SCREEN->glCONTEXT, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);}
-            inline void SHOW(){glfwSetInputMode(SCREEN->glCONTEXT, GLFW_CURSOR, GLFW_CURSOR_NORMAL);} 
-        private:
-          
-        }MOUSE;
-        
-        
+			Vec2 Position;
+			Vec2 RealPosition;
+			Vec2 Velocity;
+            int 
+				Action,
+                Modifications;
+
+            Vec2 Offset; // NEEDED TO FIX SCALING ISSUES FOR RELATIVE MOUSE POSITION OF WINDOW SIZE IS CHANGES
+
+			struct
+			{
+				bool Left, Right, Center, X1, X2;
+				short Clicks;
+			}Button;
+
+            inline void Hide(){glfwSetInputMode(SCREEN->glCONTEXT, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);}
+            inline void Show(){glfwSetInputMode(SCREEN->glCONTEXT, GLFW_CURSOR, GLFW_CURSOR_NORMAL);} 
+        }Mouse;
+//      	struct
+//      	{
+//      		Vec2 Position;
+//      		Vec2 Velocity;
+//      		Vec2 RealPosition;
+//      
+//      		int Time;
+//      		int Focus;
+//      
+//      		struct
+//      		{
+//      			bool Left, Right, Center, X1, X2;
+//      			short Clicks;
+//      		}Button;
+//      		void Show() { SDL_ShowCursor(SDL_ENABLE); }
+//      		void Hide() { SDL_ShowCursor(SDL_DISABLE); }
+//      	}Mouse;
+
         struct Key_Board
         {
              int Key, 
@@ -445,16 +335,16 @@ public:
        inline void SHOW()                                              {   glfwShowWindow(this->glCONTEXT);             }
        inline void HIDE()                                              {   glfwHideWindow(this->glCONTEXT);             }
 
-
-       void SetOrthographic(int width, int height);
-
 	   Scene *World;
 	   static Window *SCREEN;
 
 	   void Window::SetActiveWindow(Window *win) {SCREEN = win;}
 	   bool EventLoop();
+	   void SetClearColor(int r, int g, int b);
+
 	   void CLS();
 	   void CLS(unsigned long color);
+	   void CLS(int r, int g, int b);
 	   void Sync();
 	   void SetUpdate(void(*f)()) { Update = f; }
 	   void SetRender(void(*f)()) { Render = f; }
@@ -466,15 +356,17 @@ private:
 	void(*Render)();
 	void(*Idle)();
 
-static void Error_callback           ( int,    const char*);
-static void Resize_Callback          ( GLFWwindow *window,int,int);
-static void Window_close_callback    ( GLFWwindow *window);
-static void KeyBoard_Callback        ( GLFWwindow *window,    int,    int, int, int);
-static void Mouse_Callback           ( GLFWwindow *window,    int,    int, int);
-static void MouseMove_Callback       ( GLFWwindow *window, double, double);
-static void DropFile_callback        ( GLFWwindow *window,    int, const char**);
-static void Window_Size_Callback     ( GLFWwindow *window,    int,    int);
+   static void Error_callback           ( int,    const char*);
+   static void Resize_Callback          ( GLFWwindow *window,int,int);
+   static void Window_close_callback    ( GLFWwindow *window);
+   static void KeyBoard_Callback        ( GLFWwindow *window,    int,    int, int, int);
+   static void Mouse_Callback           ( GLFWwindow *window,    int,    int, int);
+   static void MouseMove_Callback       ( GLFWwindow *window, double, double);
+   static void DropFile_callback        ( GLFWwindow *window,    int, const char**);
+   static void Window_Move_Callback     ( GLFWwindow *window,    int,    int);
 
+   static const  char *GetClipBoard();
+   static void  SetClipBoard(char*);
 };
  
  
@@ -483,331 +375,145 @@ static void Window_Size_Callback     ( GLFWwindow *window,    int,    int);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-extern const  char *GetClipBoard();
-extern        void  SetClipBoard(char*);
 
-extern GLvoid* BufferObjectPtr( unsigned int idx);
 
-extern void GLClearError();
-extern void GLCheckError();
-extern bool GLLogCall(const char *function, const char *file, int line);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                                                                                  
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
-extern void *GetAnyGLFuncAddress(const char *name);
-extern float WrapAngle(float angle);
-// SCREEN RAYCASTER TO GET THE MOUSE XY Position in 3D SPACE
-//    http://antongerdelan.net/opengl/raycasting.html
-
-
-extern Matrix MatCast(float arr[16]);
-
-extern inline float Max(float p1,float p2);
-extern inline float Min(float p1, float p2);
-
-extern inline float Squared(float x);
-extern inline float GetDistance(Vec3 p1, Vec3 p2);
-
-
-//
-////In a header somewhere.
-
-//PFNGLUSEPROGRAMPROC glUseProgram;
-//
-////In an initialization routine
-//glUseProgram = (PFNGLUSEPROGRAMPROC)wglGetProcAddress("glUseProgram");
-
-
-//PFNGLUSEPROGRAMPROC EXT_compiled_vertex_array;
-//GL_ARB_vertex_buffer_object();
-//    multi draw arrays
-// ARB   pixel buffer object
-//  ARB  draw buffers
-//  GL EXT draw range elements
-//
-//  glBindBufferARB();
-
-//#define GL_ARRAY_BUFFER_ARB 0x8892
-//#define GL_STATIC_DRAW_ARB 0x88E4
-//typedef void (APIENTRY * PFNGLBINDBUFFERARBPROC) (GLenum target, GLuint buffer);
-//typedef void (APIENTRY * PFNGLDELETEBUFFERSARBPROC) (GLsizei n, const GLuint *buffers);
-//typedef void (APIENTRY * PFNGLGENBUFFERSARBPROC) (GLsizei n, GLuint *buffers);
-//typedef void (APIENTRY * PFNGLBUFFERDATAARBPROC) (GLenum target, int size, const GLvoid *data, GLenum usage);
-// 
-//// VBO Extension Function Pointers
-//PFNGLGENBUFFERSARBPROC glGenBuffersARB = NULL;                  // VBO Name Generation Procedure
-//PFNGLBINDBUFFERARBPROC glBindBufferARB = NULL;                  // VBO Bind Procedure
-//PFNGLBUFFERDATAARBPROC glBufferDataARB = NULL;                  // VBO Data Loading Procedure
-//PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB = NULL;                // VBO Deletion Procedure
-
-
-
-
-
-
-
-
-
-
-
-
-//void CAM_moveCamera(Camera *cam, GLfloat dir)
-//{
-//  GLfloat rad= (cam->camYaw + dir) * (M_PI/180.0);
-//
-//  cam->camX -= sin(rad) * cam->moveVel;
-//  cam->camZ -= cos(rad) * cam->moveVel;
-//}
-
-
-//int foo()
-//{
-//        glm::vec4 Position = glm::vec4(glm::vec3(0.0), 1.0);
-//        glm::mat4 Model = glm::mat4(1.0);
-//        Model[4] = glm::vec4(1.0, 1.0, 0.0, 1.0);
-//        glm::vec4 Transformed = Model * Position;
-//        return 0;
-//}
-//
-
-#include<string>
-#include<fstream>
-#include<vector>
-#include<strstream>
-#include"WindowGLFW.h"
-
-#define _ERROR_ 0x13
-// tried changing the 3D settings in the display control panel, but there is no noticeable effect.the only immediate solution I can think of is to 
-// use the Angle openGL replacement library, which converts opengl commands to directx, or to use a non - Intel video card.
-class  FileUtils
-{
-public:
-	static std::string read_file(const char* filepath)
-	{
-		FILE *file = fopen(filepath, "rt");
-
-		fseek(file, 0, SEEK_END);
-
-		unsigned long length = ftell(file);
-
-		char *data = new char[length + 1];
-		memset(data, 0, length + 1);
-
-		fseek(file, 0, SEEK_SET);
-		fread(data, 1, length, file);
-
-		fclose(file);
-
-		std::string result(data);
-		delete[] data;
-		return result;
-	}
-
-
-	char *FileData;
-
-	static void Load_OBJ(const char *filename)
-	{ // TODO: GET MY WORKING OBJ LOADER IN HERE AND REMOVE THIS GARBAGE
-
-		std::ifstream file(filename);
-		std::vector<Vec3> verts;
-		while (!file.eof())
-		{
-			char line[128];
-			file.getline(line, 128);
-
-			std::strstream s;
-			s << line;
-			char junk;
-
-			if (line[0] == 'v')
-			{
-				Vec3 v;
-				s >> junk >> v.x >> v.y >> v.z;
-				verts.push_back(v);
-			}
-
-			if (line[0] == 'f')
-			{
-				int file[4];
-				s >> junk >> file[0] >> file[1] >> file[2] >> file[3];
-
-				// meshShip.tris.push_back({ verts[f[0]-1], verts[f[1]-1], verts[f[2]-1], 0.0f, 0.0f, 0.0f, FG_YELLOW });
-				//  meshShip.tris.push_back({ verts[f[0]-1], verts[f[2]-1], verts[f[3]-1], 0.0f, 0.0f, 0.0f, FG_YELLOW });
-			}
-		}
-	}
-};
-
-
-#include<Chrono>
-class BenchMark
-{
-public:
-	BenchMark()
-	{
-		PerformanceTimer = std::chrono::high_resolution_clock::now();
-		ObjectCounter++;
-	}
-	~BenchMark()
-	{
-		AverageTimer += std::chrono::duration_cast  <std::chrono::nanoseconds>  (std::chrono::high_resolution_clock::now() - PerformanceTimer).count();
-		if (ObjectCounter > 100)
-		{
-			Print("LastFrame: "
-				<< std::chrono::duration_cast  <std::chrono::nanoseconds>  (std::chrono::high_resolution_clock::now() - PerformanceTimer).count()
-				<< "n/s    "
-				<< "AvgSpeed: "
-				<< (AverageResult) << "n/s  "
-				<< "FPS: "
-				<< Window::SCREEN->Framerate.Get()
-			);
-
-			ObjectCounter = 0;
-			AverageResult = AverageTimer / 100;
-			AverageTimer = 0;
-		}
-	}
-	std::chrono::time_point<std::chrono::steady_clock>  PerformanceTimer;
-	static int ObjectCounter;
-	static long long AverageTimer;
-	static long long AverageResult;
-
-	void Start()
-	{
-		PerformanceTimer = std::chrono::high_resolution_clock::now();
-	}
-	void End()
-	{
-		Print("LastFrame: "
-			<< std::chrono::duration_cast  <std::chrono::nanoseconds>  (std::chrono::high_resolution_clock::now() - PerformanceTimer).count()
-			<< "n/s    "
-			<< "AvgSpeed: "
-			<< (AverageResult) << "n/s  "
-			<< "FPS: "
-			<< Window::SCREEN->Framerate.Get());
-	}
-};
-
-
-
-
-
-
-
-template<typename T>
-struct AssetManager
-{
-public:
-
-	T *GetAsset(const char *name)
-	{
-		for_loop(Index, Count)
-		{
-			if ((List[Index]->Name != NULL) && strncmp(List[Index]->Name, name, sizeof(name)) == 0)
-			{
-				return List[Index];
-			}
-		}
-		ErrorHandler(0x01, name);
-	}
-	T *GetAsset(int id)
-	{
-		return List[id];
-	}
-
-	int  Add(T *object)
-	{
-		ID = Count++;
-		List.push_back(object);
-		return ID;
-	}
-	void Delete(char *name)
-	{
-		if (GetAsset(name)->ID != nullptr)
-		{
-			Delete(GetAsset(name)->ID);
-		}
-		else
-		{
-			ErrorHandler(0x02, name);
-		}
-	}
-	void Delete(int id)
-	{
-		delete(List[id]);
-		Remove(id);
-		//List.erase(List.begin() + id);
-		//for(int Itr = id; Itr < List.size(); Itr++)
-		//{
-		//    List[Itr]->ID--;
-		//}
-	}
-	void Remove(int id)
-	{
-		List.erase(List.begin() + (id));
-		for (int Itr = id; Itr < List.size(); Itr++)
-		{
-			List[Itr]->ID--;
-		}
-	}
-	void FreeAll()
-	{
-		for_loop(Index, List.size())
-		{
-			delete(List[Index]);
-		}
-	}
-	bool IsExistant(char *name)
-	{
-		for (auto &L : List)
-		{
-			if (strncmp(List[Index]->Name, name, sizeof(name)) == 0)   //(L.Name == name) return true;
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-private:
-	std::vector<T *> List;
-	int ID;
-	int Count;
-
-	void ErrorHandler(int code, const char *name)
-	{
-		switch (code)
-		{
-		case 0x01:
-
-			Print("Asset " << name << " Not Registered: Please check the description of ( " << name << " ) ");
-			system("Pause");
-			exit(_ERROR_);
-
-			break;
-
-		case 0x02:
-
-			Print("Can not delete Asset ( " << name << " ): Asset has already been removed  ");
-			system("Pause");
-			exit(_ERROR_);
-
-			break;
-
-		case 0x03:
-			break;
-
-		case 0x04:
-			break;
-		}
-	}
-};
-
-
-
-void EngineErrorResponse(int error, const int data, char *str);
-
-//#endif
+void *GetAnyGLFuncAddress(const char *name);
+float WrapAngle(float angle);
+
+
+Matrix MatCast(float arr[16]);
+
+inline float Max(float p1,float p2);
+inline float Min(float p1, float p2);
+
+
+float GetTicks();
+
+
+#define MYSTIC_KEY_UNKNOWN             GLFW_KEY_UNKNOWN        
+#define MYSTIC_KEY_SPACE			   GLFW_KEY_SPACE          
+#define MYSTIC_KEY_APOSTROPHE		   GLFW_KEY_APOSTROPHE     
+#define MYSTIC_KEY_COMMA			   GLFW_KEY_COMMA          
+#define MYSTIC_KEY_MINUS			   GLFW_KEY_MINUS          
+#define MYSTIC_KEY_PERIOD			   GLFW_KEY_PERIOD         
+#define MYSTIC_KEY_SLASH			   GLFW_KEY_SLASH          
+#define MYSTIC_KEY_0				   GLFW_KEY_0              
+#define MYSTIC_KEY_1				   GLFW_KEY_1              
+#define MYSTIC_KEY_2				   GLFW_KEY_2              
+#define MYSTIC_KEY_3				   GLFW_KEY_3              
+#define MYSTIC_KEY_4				   GLFW_KEY_4              
+#define MYSTIC_KEY_5				   GLFW_KEY_5              
+#define MYSTIC_KEY_6				   GLFW_KEY_6              
+#define MYSTIC_KEY_7				   GLFW_KEY_7              
+#define MYSTIC_KEY_8				   GLFW_KEY_8              
+#define MYSTIC_KEY_9				   GLFW_KEY_9              
+#define MYSTIC_KEY_SEMICOLON		   GLFW_KEY_SEMICOLON      
+#define MYSTIC_KEY_EQUAL			   GLFW_KEY_EQUAL          
+#define MYSTIC_KEY_A				   GLFW_KEY_A              
+#define MYSTIC_KEY_B				   GLFW_KEY_B              
+#define MYSTIC_KEY_C				   GLFW_KEY_C              
+#define MYSTIC_KEY_D				   GLFW_KEY_D              
+#define MYSTIC_KEY_E				   GLFW_KEY_E              
+#define MYSTIC_KEY_F				   GLFW_KEY_F              
+#define MYSTIC_KEY_G				   GLFW_KEY_G              
+#define MYSTIC_KEY_H				   GLFW_KEY_H              
+#define MYSTIC_KEY_I				   GLFW_KEY_I              
+#define MYSTIC_KEY_J				   GLFW_KEY_J              
+#define MYSTIC_KEY_K				   GLFW_KEY_K              
+#define MYSTIC_KEY_L				   GLFW_KEY_L              
+#define MYSTIC_KEY_M				   GLFW_KEY_M              
+#define MYSTIC_KEY_N				   GLFW_KEY_N              
+#define MYSTIC_KEY_O				   GLFW_KEY_O              
+#define MYSTIC_KEY_P				   GLFW_KEY_P              
+#define MYSTIC_KEY_Q				   GLFW_KEY_Q              
+#define MYSTIC_KEY_R				   GLFW_KEY_R              
+#define MYSTIC_KEY_S				   GLFW_KEY_S              
+#define MYSTIC_KEY_T				   GLFW_KEY_T              
+#define MYSTIC_KEY_U				   GLFW_KEY_U              
+#define MYSTIC_KEY_V				   GLFW_KEY_V              
+#define MYSTIC_KEY_W				   GLFW_KEY_W              
+#define MYSTIC_KEY_X				   GLFW_KEY_X              
+#define MYSTIC_KEY_Y				   GLFW_KEY_Y              
+#define MYSTIC_KEY_Z				   GLFW_KEY_Z              
+#define MYSTIC_KEY_LEFT_BRACKET		   GLFW_KEY_LEFT_BRACKET   
+#define MYSTIC_KEY_BACKSLASH		   GLFW_KEY_BACKSLASH      
+#define MYSTIC_KEY_RIGHT_BRACKET	   GLFW_KEY_RIGHT_BRACKET  
+#define MYSTIC_KEY_GRAVE_ACCENT		   GLFW_KEY_GRAVE_ACCENT   
+#define MYSTIC_KEY_WORLD_1			   GLFW_KEY_WORLD_1        
+#define MYSTIC_KEY_WORLD_2			   GLFW_KEY_WORLD_2        
+#define MYSTIC_KEY_ESCAPE			   GLFW_KEY_ESCAPE         
+#define MYSTIC_KEY_ENTER			   GLFW_KEY_ENTER          
+#define MYSTIC_KEY_TAB				   GLFW_KEY_TAB            
+#define MYSTIC_KEY_BACKSPACE		   GLFW_KEY_BACKSPACE      
+#define MYSTIC_KEY_INSERT			   GLFW_KEY_INSERT         
+#define MYSTIC_KEY_DELETE			   GLFW_KEY_DELETE         
+#define MYSTIC_KEY_RIGHT			   GLFW_KEY_RIGHT          
+#define MYSTIC_KEY_LEFT				   GLFW_KEY_LEFT           
+#define MYSTIC_KEY_DOWN				   GLFW_KEY_DOWN           
+#define MYSTIC_KEY_UP				   GLFW_KEY_UP             
+#define MYSTIC_KEY_PAGE_UP			   GLFW_KEY_PAGE_UP        
+#define MYSTIC_KEY_PAGE_DOWN		   GLFW_KEY_PAGE_DOWN      
+#define MYSTIC_KEY_HOME				   GLFW_KEY_HOME           
+#define MYSTIC_KEY_END				   GLFW_KEY_END            
+#define MYSTIC_KEY_CAPS_LOCK		   GLFW_KEY_CAPS_LOCK      
+#define MYSTIC_KEY_SCROLL_LOCK		   GLFW_KEY_SCROLL_LOCK    
+#define MYSTIC_KEY_NUM_LOCK			   GLFW_KEY_NUM_LOCK       
+#define MYSTIC_KEY_PRINT_SCREEN		   GLFW_KEY_PRINT_SCREEN   
+#define MYSTIC_KEY_PAUSE			   GLFW_KEY_PAUSE          
+#define MYSTIC_KEY_F1				   GLFW_KEY_F1             
+#define MYSTIC_KEY_F2				   GLFW_KEY_F2             
+#define MYSTIC_KEY_F3				   GLFW_KEY_F3             
+#define MYSTIC_KEY_F4				   GLFW_KEY_F4             
+#define MYSTIC_KEY_F5				   GLFW_KEY_F5             
+#define MYSTIC_KEY_F6				   GLFW_KEY_F6             
+#define MYSTIC_KEY_F7				   GLFW_KEY_F7             
+#define MYSTIC_KEY_F8				   GLFW_KEY_F8             
+#define MYSTIC_KEY_F9				   GLFW_KEY_F9             
+#define MYSTIC_KEY_F10				   GLFW_KEY_F10            
+#define MYSTIC_KEY_F11				   GLFW_KEY_F11            
+#define MYSTIC_KEY_F12				   GLFW_KEY_F12            
+#define MYSTIC_KEY_F13				   GLFW_KEY_F13            
+#define MYSTIC_KEY_F14				   GLFW_KEY_F14            
+#define MYSTIC_KEY_F15				   GLFW_KEY_F15            
+#define MYSTIC_KEY_F16				   GLFW_KEY_F16            
+#define MYSTIC_KEY_F17				   GLFW_KEY_F17            
+#define MYSTIC_KEY_F18				   GLFW_KEY_F18            
+#define MYSTIC_KEY_F19				   GLFW_KEY_F19            
+#define MYSTIC_KEY_F20				   GLFW_KEY_F20            
+#define MYSTIC_KEY_F21				   GLFW_KEY_F21            
+#define MYSTIC_KEY_F22				   GLFW_KEY_F22            
+#define MYSTIC_KEY_F23				   GLFW_KEY_F23            
+#define MYSTIC_KEY_F24				   GLFW_KEY_F24            
+#define MYSTIC_KEY_F25				   GLFW_KEY_F25            
+#define MYSTIC_KEY_KP_0				   GLFW_KEY_KP_0           
+#define MYSTIC_KEY_KP_1				   GLFW_KEY_KP_1           
+#define MYSTIC_KEY_KP_2				   GLFW_KEY_KP_2           
+#define MYSTIC_KEY_KP_3				   GLFW_KEY_KP_3           
+#define MYSTIC_KEY_KP_4				   GLFW_KEY_KP_4           
+#define MYSTIC_KEY_KP_5				   GLFW_KEY_KP_5           
+#define MYSTIC_KEY_KP_6				   GLFW_KEY_KP_6           
+#define MYSTIC_KEY_KP_7				   GLFW_KEY_KP_7           
+#define MYSTIC_KEY_KP_8				   GLFW_KEY_KP_8           
+#define MYSTIC_KEY_KP_9				   GLFW_KEY_KP_9           
+#define MYSTIC_KEY_KP_DECIMAL		   GLFW_KEY_KP_DECIMAL     
+#define MYSTIC_KEY_KP_DIVIDE		   GLFW_KEY_KP_DIVIDE      
+#define MYSTIC_KEY_KP_MULTIPLY		   GLFW_KEY_KP_MULTIPLY    
+#define MYSTIC_KEY_KP_SUBTRACT		   GLFW_KEY_KP_SUBTRACT    
+#define MYSTIC_KEY_KP_ADD			   GLFW_KEY_KP_ADD         
+#define MYSTIC_KEY_KP_ENTER			   GLFW_KEY_KP_ENTER       
+#define MYSTIC_KEY_KP_EQUAL			   GLFW_KEY_KP_EQUAL       
+#define MYSTIC_KEY_LEFT_SHIFT		   GLFW_KEY_LEFT_SHIFT     
+#define MYSTIC_KEY_LEFT_CONTROL		   GLFW_KEY_LEFT_CONTROL   
+#define MYSTIC_KEY_LEFT_ALT			   GLFW_KEY_LEFT_ALT       
+#define MYSTIC_KEY_LEFT_SUPER		   GLFW_KEY_LEFT_SUPER     
+#define MYSTIC_KEY_RIGHT_SHIFT		   GLFW_KEY_RIGHT_SHIFT    
+#define MYSTIC_KEY_RIGHT_CONTROL	   GLFW_KEY_RIGHT_CONTROL  
+#define MYSTIC_KEY_RIGHT_ALT		   GLFW_KEY_RIGHT_ALT      
+#define MYSTIC_KEY_RIGHT_SUPER		   GLFW_KEY_RIGHT_SUPER    
+#define MYSTIC_KEY_MENU				   GLFW_KEY_MENU           
+#define MYSTIC_KEY_LAST				   GLFW_KEY_LAST           

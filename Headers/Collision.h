@@ -21,9 +21,10 @@
 #pragma once
 
 #include<vector>
-#include"Window.h"
+//#include"Window.h"
 #include"Core.h"
 #include"Physics.h"
+#include"Common.h"
 //#include"QuadTree.h"
 
 //class QT; class Node;

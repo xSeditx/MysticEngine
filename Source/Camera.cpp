@@ -22,15 +22,15 @@ Viewport::Viewport(Vec3 position, Vec3 rotation)
 }
 
 // GameObject API INTERFACE FUNCTIONS
-MYSTIC_API void Viewport::Bind()
+void Viewport::Bind()
 {
 	Shader::GetActiveShader()->SetUniformCacheMat4(Shader::GetActiveShader()->ProjectionMatrixLOC, ProjectionMatrix);
 	Shader::GetActiveShader()->SetUniformCacheMat4(Shader::GetActiveShader()->ViewMatrixLOC, ViewMatrix);
 }
-MYSTIC_API void Viewport::Unbind()
+void Viewport::Unbind()
 {
 }
-MYSTIC_API void Viewport::Update()
+void Viewport::Update()
 {
 	ViewMatrix = Matrix(1.0);
 	//	ViewMatrix = RotateX(Rotation.x) * RotateY(Rotation.y) * (glm::translate(glm::mat4(1.0f), Position)); //  (Pitch *  Yaw) *RotateZ(RADIANS(1)) * 
@@ -43,36 +43,36 @@ MYSTIC_API void Viewport::Update()
 	Forward = glm::normalize(Vec3(ViewMatrix[0][2], ViewMatrix[1][2], ViewMatrix[2][2]));
 	ViewMatrix = glm::lookAt(Position, Position - Forward, Up);
 }
-MYSTIC_API void Viewport::Render()
+void Viewport::Render()
 {
 
 }
 
 
 // CAMERA MANIPULATIONS
-MYSTIC_API void Viewport::Rotate(float pitch, float yaw)
+void Viewport::Rotate(float pitch, float yaw)
 {
 	Rotation.x -= yaw * RADIANS(.9);//.005;  IT WAS .5 on both
 	Rotation.y -= pitch * RADIANS(.9); //.008;
 }
-MYSTIC_API void Viewport::MoveBack(float speed)
+void Viewport::MoveBack(float speed)
 {
 	Position -= (speed * Forward);
 }
-MYSTIC_API void Viewport::MoveLeft(float speed)
+void Viewport::MoveLeft(float speed)
 {
 	Position -= (speed)* Right;
 }
-MYSTIC_API void Viewport::MoveRight(float speed)
+void Viewport::MoveRight(float speed)
 {
 	Position += (speed)* Right;
 }
-MYSTIC_API void Viewport::MoveForward(float speed)
+void Viewport::MoveForward(float speed)
 {
 	Position += (speed * Forward);
 }
 // MATRIX TRANSFORMERS
-MYSTIC_API void Viewport::RotateX(GLfloat angle)
+void Viewport::RotateX(GLfloat angle)
 {
 	ViewMatrix *= Matrix{
 		1.0f,       0.0f,        0.0f, 0.0f,
@@ -81,64 +81,64 @@ MYSTIC_API void Viewport::RotateX(GLfloat angle)
 		0.0f,       0.0f,        0.0f, 1.0f
 	};
 }
-MYSTIC_API void Viewport::RotateY(GLfloat angle)
+void Viewport::RotateY(GLfloat angle)
 {
 	ViewMatrix *= Matrix{
 		cos(angle), 0.0f,-sin(angle), 0.0f,
-		      0.0f, 1.0f,       0.0f, 0.0f,
+			  0.0f, 1.0f,       0.0f, 0.0f,
 		sin(angle), 0.0f, cos(angle), 0.0f,
-		      0.0f, 0.0f,       0.0f, 1.0f
+			  0.0f, 0.0f,       0.0f, 1.0f
 	};
 }
-MYSTIC_API void Viewport::RotateZ(GLfloat angle)
+void Viewport::RotateZ(GLfloat angle)
 {
 	ViewMatrix *= Matrix{
 		cos(angle), 0.0f,-sin(angle), 0.0f,
 		sin(angle), 1.0f, cos(angle), 0.0f,
-		      0.0f, 0.0f,       1.0f, 0.0f,
-	   	      0.0f, 0.0f,       0.0f, 1.0f
+			  0.0f, 0.0f,       1.0f, 0.0f,
+			  0.0f, 0.0f,       0.0f, 1.0f
 	};
 }
-MYSTIC_API void Viewport::Translate(Vec3 pos)
+void Viewport::Translate(Vec3 pos)
 {
 	ViewMatrix *= (glm::translate(glm::mat4(1.0f), pos));
 }
 
 // MATRIX STATE HANDLING
-MYSTIC_API void Viewport::PushProjectionMatrix()
+void Viewport::PushProjectionMatrix()
 {
 	ProjectionMatrixStack.push(ProjectionMatrix);
 }
-MYSTIC_API void Viewport::PushViewMatrix()
+void Viewport::PushViewMatrix()
 {
 	ViewMatrixStack.push(ViewMatrix);
 }
-MYSTIC_API void Viewport::PopProjectionMatrix()
+void Viewport::PopProjectionMatrix()
 {
 	ProjectionMatrix = ProjectionMatrixStack.top();
 	ProjectionMatrixStack.pop();
 }
-MYSTIC_API void Viewport::PopViewMatrix()
+void Viewport::PopViewMatrix()
 {
 	ViewMatrix = ViewMatrixStack.top();
 	ViewMatrixStack.pop();
 }
-MYSTIC_API void Viewport::Set_ViewMatrix(Matrix mat)
+void Viewport::Set_ViewMatrix(Matrix mat)
 {
 	ViewMatrix = mat;
 }
-MYSTIC_API void Viewport::Set_ProjectionMatrix(Matrix mat)
+void Viewport::Set_ProjectionMatrix(Matrix mat)
 {
 	ProjectionMatrix = mat;
 }
 
-MYSTIC_API Matrix Viewport::GetViewMatrix()
+Matrix Viewport::GetViewMatrix()
 {
 	return ViewMatrix;
 }
 
 // HELPER FUNCTIONS
-MYSTIC_API Matrix Orthographic(int width, int height)
+Matrix Orthographic(int width, int height)
 {
-	return glm::ortho(0.0f, (float)width, (float)height, 0.0f, -0.0f , 1000.0f);
+	return glm::ortho(0.0f, (float)width, (float)height, 0.0f, -0.0f, 1000.0f);
 }

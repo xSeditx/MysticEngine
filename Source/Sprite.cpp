@@ -41,7 +41,7 @@ Frame::Frame(Image *img, Quad f) // IDK, possibly pass the UnitX/Y instead of Im
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vec2) * 4, Coords, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-void Frame::Bind()
+  void Frame::Bind()
 {
 	//glActiveTexture(GL_TEXTURE0);  // <- This should currently work but perhaps a better way would be to send the UV information to the shader, 
 	glBindBuffer(GL_ARRAY_BUFFER, ID); 	// or even better an index that resprents how much to multiply U and V by to get the correct coords since that could greatly increase performance....
@@ -52,7 +52,7 @@ void Frame::Bind()
 	glEnableVertexAttribArray(TCoords);
 	_GL(glVertexAttribPointer(TCoords, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)NULL));
 }
-void Frame::Unbind()
+  void Frame::Unbind()
 {
 	//glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -93,15 +93,15 @@ Animation::Animation(Image *spr, Quad srcrect, int border, GLuint numframes) // 
 		*this += frame;
 	}
 }
-void Animation::Bind()
+  void Animation::Bind()
 {
 	Frames[CurrentFrame].Bind();
 }
-void Animation::Unbind()
+  void Animation::Unbind()
 {
 	Frames[CurrentFrame].Unbind();
 }
-std::vector<Frame> &Animation::AddFrame(Frame frame)
+  std::vector<Frame> &Animation::AddFrame(Frame frame)
 {
 	Frames.emplace_back(frame);
 	return Frames;
@@ -129,7 +129,8 @@ Sprite::Sprite(char *name, Image *source, Vec2 dimensions, int numstates)
 	Position = Vec3(0);
 	Set_Rotation(Vec3(0));
 
-	Timer = SDL_GetTicks();
+	Timer = GetTicks();
+
 	Animations.reserve(numstates);
 
 	for_loop(count, NumberofStates)
@@ -172,14 +173,14 @@ Sprite::Sprite(char *name, Image *source, Vec2 dimensions, int numstates)
 	Moving = true;
 	ID = Manager.Add(this);
 }
-void Sprite::ResetFrames()
+  void Sprite::ResetFrames()
 {
 	for (auto &A : Animations)//Animations is Equal to STATES[] in my past implementation. 
 	{
 		A.CurrentFrame = 0;
 	}
 }
-void Sprite::Update()
+  void Sprite::Update()
 {
   	Transform = glm::mat4(1.0f); // Set Identity and Rotate all axis followed with the Translation.
 	Transform = glm::translate(Transform, Position);
@@ -187,13 +188,13 @@ void Sprite::Update()
 	Transform = glm::rotate(Transform, glm::radians(Rotation.y), Vec3(0.0f, 1.0f, 0.0f));
 	Transform = glm::rotate(Transform, glm::radians(Rotation.z), Vec3(0.0f, 0.0f, 1.0f));
 
-	AnimationTimer = SDL_GetTicks() - Timer; //clock() - Timer;// std::chrono::high_resolution_clock::now() - Timer;//
+	AnimationTimer = GetTicks() - Timer; //clock() - Timer;// std::chrono::high_resolution_clock::now() - Timer;//
 	
 	if (Moving == true)
 	{ // Checks to see if Animation should even be currently playing.
 		if (AnimationTimer > Animations[CurrentState].AnimationSpeed) // / (CLOCKS_PER_SEC / 1000)
 		{
-			Timer = SDL_GetTicks(); // clock(); // 
+			Timer = GetTicks(); // clock(); // 
 			float ticks = (AnimationTimer * 1000);
 			Animations[CurrentState].CurrentFrame += 1;// % Animations[CurrentState].TotalFrames; // Fix this so that each sprite has its own Timer  // (int)(ticks / Animations[CurrentState].AnimationSpeed)
 			Animations[CurrentState].CurrentFrame %= Animations[CurrentState].TotalFrames;
@@ -205,27 +206,27 @@ void Sprite::Update()
 		}
 	}
 }
-void Sprite::SetAnimationSpeed(float speed)
+  void Sprite::SetAnimationSpeed(float speed)
 {
 	for (auto &A : Animations)
 	{
 		A.AnimationSpeed = speed;
 	}
 }
-void Sprite::Render()
+  void Sprite::Render()
 {
 	Update();
 	Bind();
 	glDrawElements(GL_TRIANGLES, VAO->ElementCount, GL_UNSIGNED_INT, nullptr);
  
 }
-void Sprite::Render(Vec2 position)
+  void Sprite::Render(Vec2 position)
 {
 	Update();
 	Bind();
 	glDrawElements(GL_TRIANGLES, VAO->ElementCount, GL_UNSIGNED_INT, nullptr);
 }
-void Sprite::Bind()
+  void Sprite::Bind()
 {
 	Viewport::Camera->ViewMatrix =
 		glm::lookAt
@@ -245,30 +246,28 @@ void Sprite::Bind()
 //	Surface->Skin->Texture.Bind();
 
 }
-
-void Sprite::Unbind()
+  void Sprite::Unbind()
 {
 	VAO->Unbind();
 	Surface->Unbind();
 	Animations[CurrentState].Unbind();
 	glPopMatrix();
 }
-void Sprite::Add(Animation state)
+  void Sprite::Add(Animation state)
 {
 	Animations[CurrentState] = state;
 }
-void Sprite::Add(int statenum, Animation state)
+  void Sprite::Add(int statenum, Animation state)
 {
 	Animations[statenum] = state;
 }
-
-int Sprite::Submit(char *name, Sprite *spr)
+  int Sprite::Submit(char *name, Sprite *spr)
 { // Make the Assets Manager so that one has to manually add a resource to it with a Name instead of it being automatic
 	// This prevents issues with Stack based variables being destroyed leading us with dangling pointers Like can currently happen.
 
 	return 0;
 }
-static Sprite *MakeFromImage(char *name, Image &img)
+  static Sprite *MakeFromImage(char *name, Image &img)
 {
 	//Sprite *ret = new Sprite(name, );
 }

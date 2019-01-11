@@ -9,7 +9,7 @@ GameObject::GameObject()
 }
 
 
-void GameObject::Set_Transform(Vec3 pos, Vec3 rot, Vec3 scale)
+  void GameObject::Set_Transform(Vec3 pos, Vec3 rot, Vec3 scale)
 {
 	Transform = glm::mat4(1.0f); // Set Identity and Rotate all axis followed with the Translation.
 	Transform = glm::translate(Transform, pos);
@@ -20,13 +20,7 @@ void GameObject::Set_Transform(Vec3 pos, Vec3 rot, Vec3 scale)
 	// WARNING: NOT SURE SCALING IN THE PROPER ORDER
 	Print("GameObject::Set_Transform() -  Unsure if Scaling is being applied properly. Double check.");
 }
-
-
-
-
-
-
-GLenum glCheckError_(const char *file, int line)
+  GLenum glCheckError_(const char *file, int line)
 {
 	GLenum errorCode;
 	while ((errorCode = glGetError()) != GL_NO_ERROR)
@@ -62,7 +56,6 @@ std::ostream& operator<<(std::ostream &lhv, Vec4 const &rhv)
 	lhv << "X: " << rhv.x << " | " << "Y: " << rhv.y << " | " << "Z: " << rhv.z << " | " << "W: " << rhv.a;
 	return lhv;
 }
-
 
 
 Vec3 FindNormals(Vec3 verts)

@@ -9,7 +9,7 @@ Material::Material()
 	Skin = new TextureMaterial();
 }
 
-void Material::Bind()
+  void Material::Bind()
 {
 	if (Renderer != NULL)
 	{
@@ -31,7 +31,7 @@ void Material::Bind()
 		Skin->TextureCoords.Bind();
 	}
 }
-void Material::Unbind()
+  void Material::Unbind()
 {
 	if (Skin != NULL)
 	{
@@ -43,7 +43,7 @@ void Material::Unbind()
 		Shader::GetActiveShader()->Disable();
 	}
 }
-void Material::Attach(Skinenum style, Image *skin)
+  void Material::Attach(Skinenum style, Image *skin)
 {
 	switch (style)
 	{
@@ -63,22 +63,18 @@ void Material::Attach(Skinenum style, Image *skin)
 		EngineErrorResponse(0x123, NULL, "Improper Texture Format");
     }
 };
-void Material::SetSurfaceColor(Vec3 A, Vec3 D, Vec3 S)
+  void Material::SetSurfaceColor(Vec3 A, Vec3 D, Vec3 S)
 {
 	SurfaceColor.Ambient = A;
 	SurfaceColor.Diffuse = D;
 	SurfaceColor.Specular = S;
 }
-void Material::SetTextureCoords(UVBuffer coords)
+  void Material::SetTextureCoords(UVBuffer coords)
 {
 	Skin->TextureCoords = coords;
 }
 
-
-
-
-
-Material* BrickMaterial()
+  Material* BrickMaterial()
 {
 	Material *ret = new Material();
 	ret->Attach(Shader::GetActiveShader());
@@ -86,7 +82,7 @@ Material* BrickMaterial()
 	ret->Attach(SKIN_NORMALS, Image::Manager.GetAsset("BrickNormals"));
 	return ret;
 }
-Material* StoneMaterial()
+  Material* StoneMaterial()
 {
 	Material *ret = new Material();
   	ret->Attach(Shader::GetActiveShader());
@@ -94,7 +90,7 @@ Material* StoneMaterial()
 	ret->Attach(SKIN_NORMALS, Image::Manager.GetAsset("StoneNormals"));
 	return ret;
 }
-Material* MoonMaterial()
+  Material* MoonMaterial()
 {
 	Material *ret = new Material();
 	ret->Attach(Shader::GetActiveShader());

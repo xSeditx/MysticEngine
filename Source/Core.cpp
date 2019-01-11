@@ -13,7 +13,7 @@ Scene::Scene(Material *renderer)
 	Surface = renderer;
 	Groups.push_back(Group());
 }
-void Scene::Update()
+  void Scene::Update()
 {
 	Camera.Update(); // If this breaks remove it....
 	for (auto& G : Groups)
@@ -27,7 +27,7 @@ void Scene::Update()
 // The rotation and location of the initial position of the Camera in the scene. This would effectively cause the entire World/Scene to rotate around me 
 // Which is essentially what a Camera is anyway only that with the Camera class I abstracted away that behavior
 
-void Scene::Render() 
+  void Scene::Render()
 {
 	if (Surface != NULL)
 	{
@@ -46,25 +46,25 @@ void Scene::Render()
 		Surface->Unbind();
 	}
 }
-void Scene::AddGroup(const Group& group)
+  void Scene::AddGroup(const Group& group)
 {
 	Groups.push_back(group);
 	GroupCount++;
 }
-void Scene::AddLight(const Light& light)
+ void Scene::AddLight(const Light& light)
 {
 	Lights.push_back(light);
 	LightCount++;
 }
-void Scene::Attach(Material *surf)
+ void Scene::Attach(Material *surf)
 {
 	Surface = surf;
 }
-void Scene::Attach(Viewport camera)
+ void Scene::Attach(Viewport camera)
 {
 	Camera = camera;
 }
-void Scene::Attach(Shader *renderer)
+ void Scene::Attach(Shader *renderer)
 {
 	if (Surface == NULL)
 	{
@@ -72,6 +72,8 @@ void Scene::Attach(Shader *renderer)
 	}
 	Surface->Attach(renderer);
 }
+
+
 
 Group::Group()
 {
@@ -88,8 +90,6 @@ void Group::Add(Mesh* object, Material *surface)
 	Objects.push_back(object);
 	ObjectCount++;
 }
-
-
 void Group::Attach(Material *surface)
 {
 	Surface = surface;
@@ -102,7 +102,6 @@ void Group::Attach(Shader *shader)
 	}
 	Surface->Attach(shader);
 }
-
 void Group::Bind()
 {
 
@@ -149,10 +148,6 @@ void Group::Render()
 	}
 	Unbind();
 }
-
-
-
-
 
 
 // Mesh.cpp/h     245 Lines

@@ -1,15 +1,10 @@
-
-
-
 #include"Common.h"
-
 
 int BenchMark::ObjectCounter = 0;
 long long BenchMark::AverageTimer = 0;
 long long BenchMark::AverageResult = 0;
 
-
-bool GLLogCall(const char *function, const char *file, int line)
+bool   GLLogCall(const char *function, const char *file, int line)
 {
 	GLenum error = glGetError();
 	if (error != 0)
@@ -25,7 +20,7 @@ bool GLLogCall(const char *function, const char *file, int line)
 	}
 	return true;
 }
-void GLCheckError()
+void   GLCheckError()
 {
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR)
@@ -33,22 +28,13 @@ void GLCheckError()
 		std::cout << "GLCHECKERROR" << err;
 	}
 }
-void GLClearError()
+void   GLClearError()
 {
 	//     while((glGetError()) != GL_NO_ERROR);
 }
-void SDLCheckError()
-{
-	const char *error = SDL_GetError();
-	if (*error != '\0')
-	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-			"Simple DirectMedia Layer Error", SDL_GetError(), NULL);
-		SDL_Quit();
-		EngineErrorResponse(0x13, *error, NULL);
-	}
-}
-void EngineErrorResponse(int error, const int data, char *str)
+
+ 
+void   EngineErrorResponse(int error, const int data, char *str)
 {
 	switch (error)
 	{
@@ -73,7 +59,7 @@ void EngineErrorResponse(int error, const int data, char *str)
 		break;
 	}
 }
-void SetOpenGLState()
+ void   SetOpenGLState()
 {
 	glShadeModel(GL_SMOOTH);
 
@@ -99,7 +85,70 @@ void SetOpenGLState()
 
 
 }
-void GetOpenGLState()
+
+ void   GetOpenGLState()
+{
+	//--------Gathering information about OpenGL state and Display it -----------------------------------------------
+	int NumberOfExtensions = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &NumberOfExtensions);
+	for_loop(Count, NumberOfExtensions)
+	{
+		Print(glGetStringi(GL_EXTENSIONS, Count));
+	}
+	//const GLubyte *extensions = glGetString(GL_EXTENSIONS);
+	//Print(extensions);
+	Print("OpenGL Version: "; Print(glGetString(GL_VERSION)));
+	Print("Renderer: "; Print(glGetString(GL_RENDERER)));
+	Print("Vendor: "; Print(glGetString(GL_VENDOR)));
+	Print("Current Context: "; Print(wglGetCurrentContext()));
+
+	//-------------------------------------------------------------------------------------------------------------
+
+}
+float   Squared(float x) { return x*x; }
+float   GetDistance(Vec3 p1, Vec3 p2)
+{
+	return
+		sqrt(Squared(p1.x - p2.x) +
+		Squared(p1.y - p2.y) +
+		Squared(p1.z - p2.x));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#ifdef _USE_SDL_WINDOW
+      void SDLCheckError()
+    {
+    	const char *error = SDL_GetError();
+    	if (*error != '\0')
+    	{
+    		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+    			"Simple DirectMedia Layer Error", SDL_GetError(), NULL);
+    		SDL_Quit();
+    		EngineErrorResponse(0x13, *error, NULL);
+    	}
+    }
+    
+#endif
+
+
+
+
+
+#if 0
+  void GetOpenGLState()
 {
 	int Results;
 	bool success = false;
@@ -281,32 +330,4 @@ void GetOpenGLState()
 	else {
 		Print("SDL_GL_CONTEXT_EGL :" << Results);
 	}
-
-	//--------Gathering information about OpenGL state and Display it -----------------------------------------------
-	int NumberOfExtensions = 0;
-	glGetIntegerv(GL_NUM_EXTENSIONS, &NumberOfExtensions);
-	for_loop(Count, NumberOfExtensions)
-	{
-		Print(glGetStringi(GL_EXTENSIONS, Count));
-	}
-	//const GLubyte *extensions = glGetString(GL_EXTENSIONS);
-	//Print(extensions);
-	Print("OpenGL Version: "; Print(glGetString(GL_VERSION)));
-	Print("Renderer: "; Print(glGetString(GL_RENDERER)));
-	Print("Vendor: "; Print(glGetString(GL_VENDOR)));
-	Print("Current Context: "; Print(wglGetCurrentContext()));
-
-	//-------------------------------------------------------------------------------------------------------------
-
-}
-
-float Squared(float x) { return x*x; }
-
-
-float GetDistance(Vec3 p1, Vec3 p2)
-{
-	return
-		sqrt(Squared(p1.x - p2.x) +
-		Squared(p1.y - p2.y) +
-		Squared(p1.z - p2.x));
-}
+#endif

@@ -22,7 +22,7 @@ Light::Light(Vec3 pos, Vec3 ambient, Vec3 diffuse, Vec3 specular)
 	Transform = glm::scale(Transform, Vec3(1.0f));
 }
 
-void Light::Set(Lighttype which, Vec3 value)
+  void Light::Set(Lighttype which, Vec3 value)
 {
 	switch (which)
 	{
@@ -39,25 +39,24 @@ void Light::Set(Lighttype which, Vec3 value)
 		break;
 	}
 }
-void Light::Set(Vec3 ambient, Vec3 diffuse, Vec3 specular)
+  void Light::Set(Vec3 ambient, Vec3 diffuse, Vec3 specular)
 {
 	AmbientColor = ambient;
 	DiffuseColor = diffuse;
 	SpecularColor = specular;
 }
-
-void Light::Bind()
+  void Light::Bind()
 {
 	Shader::GetActiveShader()->SetUniform3f("AmbientLight", AmbientColor);
 	Shader::GetActiveShader()->SetUniform3f("DiffuseLight", DiffuseColor);
 	Shader::GetActiveShader()->SetUniform3f("SpecularLight", SpecularColor);
 	Shader::GetActiveShader()->SetUniform3f("LightPosition1", Position);
 }
-void Light::Unbind()
+  void Light::Unbind()
 {
 	//NOTHING TO REALLY UNBIND HERE IS THERE?
 }
-void Light::Update()
+  void Light::Update()
 {
 	Transform = glm::mat4(1.0f); // Set Identity and Rotate all axis followed with the Translation.
 	Transform = glm::translate(Transform, Position);
@@ -66,8 +65,7 @@ void Light::Update()
 	Transform = glm::rotate(Transform, glm::radians(Rotation.z), Vec3(0.0f, 0.0f, 1.0f));
 
 }
-
-void Light::Render()
+  void Light::Render()
 {
 //glPointSize(6);
 //glBegin(GL_POINTS);

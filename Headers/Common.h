@@ -2,8 +2,12 @@
 
 #include"Window.h"
 #include<chrono>
-class Window;
 
+#include<string>
+#include<fstream>
+#include<vector>
+#include<strstream>
+ 
 /*===============================================================================================================================================================================================
 //
 //
@@ -11,7 +15,7 @@ class Window;
 //
 //
 =================================================================================================================================================================================================*/
-
+#define      __cdecl 
 
 class BenchMark
 {
@@ -67,29 +71,54 @@ void GLClearError();
 void SDLCheckError();
 void EngineErrorResponse(int error, const int data, char *str);
 
-// https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlseteventfilter.html
-// SDL_SetEventFilter((SDL_EventFilter)&filter); // Called on window creation.
-//TODO" Make a GLUT like Update, Input Draw etc...etc.. Register Mechanic
-//n "update" function, an "input" function, a "draw" function, and an "idle
-/// Look into GLUT based GLUI library for GUI Stuff
-
 
 /*===============================================================================================================================================================================================
 //
 //      FILE AND ASSET MODULE
 //
-=================================================================================================================================================================================================*/
-
-
-#define glCheckError() glCheckError_(__FILE__, __LINE__) 
-
+API:
 
 GLenum glCheckError_(const char *file, int line);
 
-#define _ERROR_ 0x13
+std::ostream& operator<<(std::ostream &lhv, Vec2 const &rhv);       - Prints a Vec2 to the Console.
+std::ostream& operator<<(std::ostream &lhv, Vec3 const &rhv);       - Prints a Vec3 to the Console.
+std::ostream& operator<<(std::ostream &lhv, Vec4 const &rhv);       - Prints a Vec4 to the Console.
 
-// tried changing the 3D settings in the display control panel, but there is no noticeable effect.the only immediate solution I can think of is to 
-// use the Angle openGL replacement library, which converts opengl commands to directx, or to use a non - Intel video card.
+Vec3   FindNormals(Vec3 verts);                                     - Gets the Normals for a Vec3
+void   SetOpenGLState();                                            - Sets various state Params when running SDL based Windowing system
+float  GetDistance(Vec3 p1, Vec3 p2);								- Finds the Euler distance between two Vec3 points
+ 
+ template<typename T>
+ struct AssetManager
+ {
+ }
+ class  FileUtils
+  
+    static std::string read_file(const char* filepath)
+    static void Load_OBJ(const char *filename)
+    T *GetAsset(const char *name)
+    T *GetAsset(int id)
+    int  Add(T *object)
+ 
+    void Delete(char *name)
+  	void Delete(int id)
+ 	void Remove(int id)
+ 	void FreeAll()
+	bool IsExistant(char *name)
+ 	void ErrorHandler(int code, const char *name)
+
+	private:
+	std::vector<T *> List;
+	int ID;
+	int Count;
+
+=================================================================================================================================================================================================*/
+
+#define _ERROR_ 0x13
+#define glCheckError() glCheckError_(__FILE__, __LINE__) 
+
+
+  GLenum glCheckError_(const char *file, int line);
 
 
 class  FileUtils
@@ -151,7 +180,6 @@ public:
 		}
 	}
 };
-
 
 template<typename T>
 struct AssetManager
@@ -260,20 +288,34 @@ private:
 			break;
 		}
 	}
-
 };
+
+
 
 
 std::ostream& operator<<(std::ostream &lhv, Vec2 const &rhv);
 std::ostream& operator<<(std::ostream &lhv, Vec3 const &rhv);
 std::ostream& operator<<(std::ostream &lhv, Vec4 const &rhv);
+
 Vec3 FindNormals(Vec3 verts);
 
 
 void SetOpenGLState();
-
-
-
-
-
+float Squared(float other);
 float GetDistance(Vec3 p1, Vec3 p2);
+
+
+
+
+/*===================================================================================================================================================================================================
+
+                      NOTES
+ 
+ ====================================================================================================================================================================================================*/
+
+// https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlseteventfilter.html
+// SDL_SetEventFilter((SDL_EventFilter)&filter); // Called on window creation.
+//TODO" Make a GLUT like Update, Input Draw etc...etc.. Register Mechanic
+//n "update" function, an "input" function, a "draw" function, and an "idle
+
+/// Look into GLUT based GLUI library for GUI Stuff
