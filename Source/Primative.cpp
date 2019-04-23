@@ -737,6 +737,135 @@ GeoSphere::GeoSphere(Vec3 pos, float radius, int sectors)
 }
 
 
+
+#include<map>
+struct Triangle
+{
+	GLuint vertex[3];
+};
+
+using TriangleList = std::vector<Triangle>;
+using VertexList = std::vector<Vec3>;
+float Scale = 5.0;
+const float X = .525731112119133606f;
+const float Z = .850650808352039932f;
+const float N = 0.f;
+
+static const VertexList vertices =
+{
+	{ -X,N,Z },{ X,N,Z },{ -X,N,-Z },{ X,N,-Z },
+	{ N,Z,X },{ N,Z,-X },{ N,-Z,X },{ N,-Z,-X },
+	{ Z,X,N },{ -Z,X, N },{ Z,-X,N },{ -Z,-X, N }
+};
+static const TriangleList triangles =
+{
+	{ 0,4,1 },{ 0,9,4 },{ 9,5,4 },{ 4,5,8 },{ 4,8,1 },
+	{ 8,10,1 },{ 8,3,10 },{ 5,3,8 },{ 5,2,3 },{ 2,7,3 },
+	{ 7,10,3 },{ 7,6,10 },{ 7,11,6 },{ 11,0,6 },{ 0,1,6 },
+	{ 6,1,10 },{ 9,0,11 },{ 9,11,2 },{ 9,2,5 },{ 7,2,11 }
+};
+using Lookup = std::map<std::pair<GLuint, GLuint>, GLuint>;
+
+GLuint vertex_for_edge(Lookup& lookup, VertexList& vertices, GLuint first, GLuint second)
+{
+	Lookup::key_type key(first, second);
+	if (key.first>key.second)
+		std::swap(key.first, key.second);
+
+	auto inserted = lookup.insert({ key, (GLuint)vertices.size() });
+	if (inserted.second)
+	{
+		auto& edge0 = vertices[first];
+		auto& edge1 = vertices[second];
+		auto point = normalize(edge0 + edge1);
+		vertices.push_back(point);
+	}
+
+	return inserted.first->second;
+}
+TriangleList subdivide(VertexList& vertices, TriangleList triangles)
+{
+	Lookup lookup;
+	TriangleList result;
+
+	for (auto&& each : triangles)
+	{
+		//std::array<GLuint, 3> mid;
+		GLuint mid[3];
+		for (int edge = 0; edge<3; ++edge)
+		{
+			mid[edge] = vertex_for_edge(lookup, vertices,
+				each.vertex[edge], each.vertex[(edge + 1) % 3]);
+		}
+
+		result.push_back({ each.vertex[0], mid[0], mid[2] });
+		result.push_back({ each.vertex[1], mid[1], mid[0] });
+		result.push_back({ each.vertex[2], mid[2], mid[1] });
+		result.push_back({ mid[0], mid[1], mid[2] });
+	}
+
+	return result;
+}
+
+using IndexedMesh = std::pair<VertexList, TriangleList>;
+
+
+
+
+
+GeoSphere::GeoSphere(Vec3 pos, float radius, int sectors)
+	:
+	Radius(radius)
+{
+
+	//IndexedMesh make_icosphere(int subdivisions)
+
+		VertexList Vertices = vertices;
+		TriangleList Triangles = triangles;
+
+		for (int i = 0; i< sectors; ++i)
+		{
+			Triangles = subdivide(Vertices, Triangles);
+		}
+		std::vector<Vec3>Normals;
+
+
+
+		for (auto &V : Vertices)
+		{
+
+			float x = V.x;
+			float y = V.y;
+			float z = V.z;
+
+			float  magnitude = sqrt(Squared(x) + Squared(y) + Squared(z));
+
+			if (magnitude != 0)
+			{
+				x /= magnitude;
+				y /= magnitude;
+				z /= magnitude;
+			}
+			Normals.push_back(Vec3(x, y, z)); //  Vec3(RANDOM(2)-1,RANDOM(2)-1,RANDOM(2)-1);//
+		}
+
+		std::vector<Vec2> UV;
+		for(auto &N: Normals)
+		{
+			float theta = (atan2f(N.x, N.z) / M_PI) / 2.f + 0.5f;
+			float phi = (asinf(-N.y) / (M_PI / 2.0f)) / 2.f + 0.5f;
+			UV.push_back(Vec2(theta, phi));
+		}
+
+
+		VAO = new VertexArrayObject();
+		VAO->Attach(BufferTypes::VERTEX, new VertexBufferObject<Vec3>(&Vertices[0], Vertices.size()));
+		VAO->Attach(BufferTypes::NORMAL, new VertexBufferObject<Vec3>(&Normals[0], Normals.size() ));
+		VAO->Attach(BufferTypes::UVCOORD, new VertexBufferObject<Vec2>(&UV[0], UV.size()));
+
+		VAO->Attach(BufferTypes::INDICE, new VertexBufferObject<GLuint>(&Triangles[0].vertex[0], Triangles.size() * 3));
+}
+
  
 Torus::Torus(Vec3 position, int numc, int numt,  float scale)
 {
